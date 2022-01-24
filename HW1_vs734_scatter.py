@@ -5,8 +5,6 @@ import pandas as pd
 
 df = pd.read_csv('asoiaf_nodes_prop.csv')
 
-
-
 # print(df)
 fig = px.scatter(df,
                  x = 'pagerank', # x axis
