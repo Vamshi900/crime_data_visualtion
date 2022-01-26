@@ -3,6 +3,7 @@ import pandas as pd
 
 df = pd.read_csv('asoiaf_nodes_prop.csv')
 
+# function to normalise data
 def normalise_properties(df):
     # make a copy of the exisitng data 
     newdata = df.copy()
