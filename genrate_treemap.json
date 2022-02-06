@@ -87,31 +87,14 @@ depths= list(g_levels.values())
 df2 = pd.read_csv('asoiaf_nodes_prop.csv')
 
 # add root index 
-df['value']=df2['diversity']
+df['values']=df2['diversity']
 
 df = df[df['degree']!=0]
 df = df[df['peel']!=0]
 df = df[df['diversity']!=0]
 df = df[df['pagerank']!=0]
 df = df[df['betweenness']!=0]
-df = df[df['value']!=0]
+df = df[df['values']!=0]
 print('data ready')
-# print(df)
-
-new = df[['id', 'value']].copy()
-
-new.to_csv('tree.csv')
-new.to_json('./tree_data.json',orient='records', lines=True)
-fig = px.treemap(df, path=['degree', 'peel', 'pagerank','betweenness'], 
-                 labels=depths,
-                 values='value', color='value')
-print('treemap genrated')
-# fig.show()
-fig.write_image('./Hw1_late_vs734_treemap.png')
-
-
-
-
-
-
-
+print(df)
+df.to_json('./tree_data.json',orient='records', lines=True)
