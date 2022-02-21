@@ -5,6 +5,8 @@
 from dash import Dash, html, dcc
 import plotly.express as px
 import pandas as pd
+import plotly.figure_factory as ff
+
 
 app = Dash(__name__)
 
@@ -15,6 +17,43 @@ df = pd.DataFrame({
 })
 
 fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+
+
+def create_geomap():
+    scope = ['Oregon']
+    df_sample = pd.read_csv(
+        'https://raw.githubusercontent.com/plotly/datasets/master/minoritymajority.csv')
+    df_sample_r = df_sample[df_sample['STNAME'].isin(scope)]
+
+    values = df_sample_r['TOT_POP'].tolist()
+    fips = df_sample_r['FIPS'].tolist()
+
+    colorscale = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072",
+                  "#80b1d3", "#fdb462", "#b3de69", "#fccde5",
+                  "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f",
+                  "#8dd3c7", "#ffffb3", "#bebada", "#fb8072",
+                  "#80b1d3", "#fdb462", "#b3de69", "#fccde5",
+                  "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f",
+                  "#8dd3c7", "#ffffb3", "#bebada", "#fb8072",
+                  "#80b1d3", "#fdb462", "#b3de69", "#fccde5",
+                  "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f"]
+
+    fig = ff.create_choropleth(
+        fips=fips,
+        values=values,
+        scope=scope,
+        colorscale=colorscale,
+        round_legend_values=True,
+        simplify_county=0,
+        simplify_state=0,
+        county_outline={'color': 'rgb(15, 15, 55)', 'width': 0.5},
+        state_outline={'width': 1},
+        legend_title='pop. per county',
+        title='Illinois')
+
+    fig.layout.template = None
+    return fig
+
 
 app.layout = html.Div([
     html.Div(children=[
@@ -43,7 +82,7 @@ app.layout = html.Div([
             2022,
             1,
             marks={i: f'{i}' for i in range(2001, 2022, 5)},
-            value=[2001,2010],
+            value=[2001, 2010],
             tooltip={"placement": "bottom", "always_visible": True}
         ),
 
@@ -58,8 +97,16 @@ app.layout = html.Div([
         #     id='year-slider'
         # )
 
-    ], style={'padding': 10, 'flex': 1})
-], style={'display': 'flex', 'flex-direction': 'row'})
+    ], style={'padding': 10, 'flex': 1}),
+
+    html.Div(children=[
+        dcc.Graph(id='geomap_figure',
+                  figure=create_geomap(),
+                  )
+    ])
+
+
+], style={'display': 'flex', 'flex-direction': 'column'})
 
 
 # run the the server

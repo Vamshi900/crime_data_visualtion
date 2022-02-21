@@ -4,3 +4,4 @@ pandas
 dash
 plotly
 gunicorn
+redis

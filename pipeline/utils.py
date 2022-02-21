@@ -3,16 +3,16 @@ import numpy as np
 import pandas as pd
 
 
-
 # converting to hdf5 format will help us faster indexing and filtering
 def convert_to_hdf5():
     # use pandas to read in the data
-    # todo remove local read connect to s3 
+    # todo remove local read connect to s3
     df_pandas = pd.read_csv('./data.csv')
     df_pandas.dropna(inplace=True)
 
     # convert dates to pandas datetime format
-    df_pandas.Date = pd.to_datetime(df_pandas.Date, format='%m/%d/%Y %I:%M:%S %p')
+    df_pandas.Date = pd.to_datetime(
+        df_pandas.Date, format='%m/%d/%Y %I:%M:%S %p')
 
     # setting the index to be the date will help us a lot later on
     df_pandas.index = pd.DatetimeIndex(df_pandas.Date)
@@ -31,13 +31,10 @@ def compute_district_agg(crimes):
     crimes = vx.open('./processed.hdf5')
     # group by district
     district_crime = crimes.groupby('District').agg({"District": "count"})
-    # add geo tagged districts 
+    # add geo tagged districts
     return district_crime
     pass
 
-# function to group crimes by ward     
+# function to group crimes by ward
 # def compute_ward_agg(crimes):
-      #pass
-
-  
-
+    # pass
