@@ -1,0 +1,6 @@
+vaex
+numpy
+pandas
+dash
+plotly
+gunicorn
