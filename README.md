@@ -8,7 +8,7 @@ Defaulting with visual studio code .
 1. `install anaconda as package manager` .(high priority)
 2. Clone the repo . 
 3. change working directory  into app directory ( will arrange files later)
-5. `conda create -n diva python=3.7 pip` (cerates the virual env) 
+5. `conda create -n diva python=3.8.10 pip` (cerates the virual env) 
 6. `conda activate diva` ( activates the env)
 7. `conda install -y -c conda-forge --file requirements.txt` ( install vaex) (specifically)
 8. That is all with setup 
