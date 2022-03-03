@@ -12,14 +12,14 @@ import plotly.figure_factory as ff
 # app intialisation 
 app = Dash(__name__)
 
-# cache setup 
-cache = Cache(app.server, config={
-    'CACHE_TYPE': 'filesystem',
-    'CACHE_DIR': 'cache-directory'
-})
+# # cache setup 
+# cache = Cache(app.server, config={
+#     'CACHE_TYPE': 'filesystem',
+#     'CACHE_DIR': 'cache-directory'
+# })
 
-# time out 
-CACHE_TIMEOUT = int(os.environ.get('DASH_CACHE_TIMEOUT', '60'))
+# # time out 
+# CACHE_TIMEOUT = int(os.environ.get('DASH_CACHE_TIMEOUT', '60'))
 
 # figure functions start
 

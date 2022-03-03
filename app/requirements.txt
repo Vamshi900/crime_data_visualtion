@@ -5,3 +5,7 @@ dash
 plotly
 gunicorn
 redis
+plotly-geo
+geopandas
+pyshp
+shapely
