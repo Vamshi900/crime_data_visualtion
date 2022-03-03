@@ -21,7 +21,14 @@ cache = Cache(app.server, config={
 # time out 
 CACHE_TIMEOUT = int(os.environ.get('DASH_CACHE_TIMEOUT', '60'))
 
+# figure functions start
 
+# import from figures.py
+#---- figure functions end
+
+# filter options 
+
+#
 
 df = pd.DataFrame({
     "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
