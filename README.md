@@ -10,9 +10,8 @@ Defaulting with visual studio code .
 3. change working directory  into app directory ( will arrange files later)
 5. `conda create -n diva python=3.7 pip` (cerates the virual env) 
 6. `conda activate diva` ( activates the env)
-7. `conda install -c conda-forge vaex` ( install vaex) (specifically)
-8. `pip install -r requirements.txt` (this install all the dependencies required , for m1 mac if issues ping me )
-9. That is all with setup 
+7. `conda install -y -c conda-forge --file requirements.txt` ( install vaex) (specifically)
+8. That is all with setup 
 
 ## start the app
 `python3 app.py` ( run the app.py file in app directory ) 
