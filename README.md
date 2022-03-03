@@ -15,7 +15,7 @@ Defaulting with visual studio code .
 
 ## start the app
 `python3 app.py` ( run the app.py file in app directory ) 
-Note: default port is 8050 , keep it open or switch to another port
+Note: default port is 8080 , keep it open or switch to another port
 
 
 
