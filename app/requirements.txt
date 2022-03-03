@@ -1,4 +1,3 @@
-vaex
 numpy
 pandas
 dash
