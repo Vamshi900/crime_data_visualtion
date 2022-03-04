@@ -119,11 +119,11 @@ app.layout = html.Div([
 
     ], style={'padding': 10, 'flex': 1}),
 
-    html.Div(children=[
-        dcc.Graph(id='geomap_figure',
-                  figure=create_geomap(),
-                  )
-    ])
+    # html.Div(children=[
+    #     dcc.Graph(id='geomap_figure',
+    #               figure=create_geomap(),
+    #               )
+    # ])
 
 
 ], style={'display': 'flex', 'flex-direction': 'column'})
@@ -131,4 +131,5 @@ app.layout = html.Div([
 
 # run the the server
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port=8080, debug=True)
+    # app.run_server(debug=True)
