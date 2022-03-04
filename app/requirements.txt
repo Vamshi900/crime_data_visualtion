@@ -1,11 +1,8 @@
-vaex
 numpy
 pandas
 dash
 plotly
-gunicorn
-redis
-plotly-geo
-geopandas
-pyshp
-shapely
+# plotly-geo
+# geopandas
+# pyshp
+# shapely
