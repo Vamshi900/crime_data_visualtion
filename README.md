@@ -8,13 +8,14 @@ Defaulting with visual studio code .
 1. `install anaconda as package manager` .(high priority)
 2. Clone the repo . 
 3. change working directory  into app directory ( will arrange files later)
-4. `conda create -n python=3.7 diva_app pip` (cerates the virual env) 
-5. `pip install -r requirements.txt` (this install all the dependencies required , for m1 mac if issues ping me )
-6. That is all with setup 
+5. `conda create -n diva python=3.8.10 pip` (cerates the virual env) 
+6. `conda activate diva` ( activates the env)
+7. `conda install -y -c conda-forge --file requirements.txt` ( install vaex) (specifically)
+8. That is all with setup 
 
 ## start the app
 `python3 app.py` ( run the app.py file in app directory ) 
-Note: default port is 8050 , keep it open or switch to another port
+Note: default port is 8080 , keep it open or switch to another port
 
 
 
