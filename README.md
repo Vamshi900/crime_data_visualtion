@@ -1,5 +1,8 @@
 # diva536
 
+Use mapbox carefully we only have 50k free loads per api key . we need to create more keys testing and deployment
+
+
 # prerqusites
 
 ## local setup 
