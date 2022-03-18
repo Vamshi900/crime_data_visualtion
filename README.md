@@ -3,6 +3,10 @@
 Use mapbox carefully we only have 50k free loads per api key . we need to create more keys testing and deployment
 
 
+https://dash.vaex.io/
+
+https://github.com/streamlit/demo-uber-nyc-pickups/blob/main/streamlit_app.py
+
 # prerqusites
 
 ## local setup 
