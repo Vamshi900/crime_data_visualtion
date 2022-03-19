@@ -1,4 +1,4 @@
-import json
+"""import json
 import logging
 import os
 
@@ -14,7 +14,7 @@ app = Dash(__name__)
 
 # # cache setup 
 # cache = Cache(app.server, config={
-#     'CACHE_TYPE': 'filesystem',
+#     'CACHE_TYPE': 'filesyste',
 #     'CACHE_DIR': 'cache-directory'
 # })
 
@@ -119,17 +119,99 @@ app.layout = html.Div([
 
     ], style={'padding': 10, 'flex': 1}),
 
-    # html.Div(children=[
-    #     dcc.Graph(id='geomap_figure',
-    #               figure=create_geomap(),
-    #               )
-    # ])
+    html.Div(children=[
+         dcc.Graph(id='geomap_figure',
+                   figure=create_geomap(),
+                   )
+    ])
 
 
 ], style={'display': 'flex', 'flex-direction': 'column'})
-
 
 # run the the server
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=8080, debug=True)
     # app.run_server(debug=True)
+
+"""
+
+from dash import Dash, html, dcc
+from filters import FilterCreation
+
+app = Dash(__name__)
+
+filters = FilterCreation()
+
+# dashboard layout code
+app.layout = html.Div([
+    html.H1('Criminalytics: A visual tool for crime analysis',
+            style={
+                'textAlign':'center',
+                'paddingTop': '10px'
+            }
+    ),
+
+    html.Div(
+        className = "row", children = [
+            html.Div(className="Element", children = [
+                html.Label("Displayed Crimes")
+            ], style=dict(width="25%",background="white",margin="10px",padding="15px")),
+            html.Div(className="Element", children = [
+                html.Label("Select Years"),
+                filters.range_selector("years")
+            ], style=dict(width="25%",background="white",margin="10px",padding="15px")),
+            html.Div(className="Element", children = [
+                html.Label("Select Crime Type"),
+                filters.dropdown_filter("crime_type")
+            ], style=dict(width="25%",background="white",margin="10px",padding="15px")),
+            html.Div(className="Element", children = [
+                html.Label("Select Month"),
+                filters.dropdown_filter("months")
+            ], style=dict(width="25%",background="white",margin="10px",padding="15px"))
+        ], style=dict(display='flex')
+    ),
+
+    dcc.Tabs(id="tabs", value='tab-1-visualization', children=[
+        dcc.Tab(label='Visualization', value='tab-1-visualization'),
+        dcc.Tab(label='Prediction', value='tab-2-prediction'),
+    ], style=dict(padding="15px")),
+
+    html.Div(className="Maps", children = [
+        html.Div(className="MainMap", id="main_map", children = [
+            html.Label("Dem")
+            #html.Iframe(src="./district.html", style={'width':"40%", 'height':"380px"})
+        ], style=dict(width="40%", height="380px",background="white",margin="10px",padding="15px")),
+        html.Div(className="Element", id="filter_district", children = [
+            html.Label("Select Districts"),
+            filters.dropdown_filter("districts")
+        ], style=dict(width="200px",margin_bottom="150px")),
+        html.Div(className="MinMap", id="min_map", children = [
+            html.Div(className="MinMap", id="min_map1", children = [
+                html.Label("Map2")
+            ], style=dict(width="20%", height="380px",background="white",margin="10px",padding="15px")),
+            html.Div(className="MinMap", id="min_map2", children = [
+                html.Label("Map3")
+            ], style=dict(width="20%", height="380px",background="white",margin="10px",padding="15px")),
+            html.Div(className="MinMap", id="min_map3", children = [
+                html.Label("Map4")
+            ], style=dict(width="20%", height="380px",background="white",margin="10px",padding="15px"))
+        ],style=dict(display='flex'))
+    ],style=dict(display='flex')),
+
+    html.Div(className = "charts_table", children=[
+        html.Div(className="Element", children = [
+            html.Label("District Sunburst")
+        ], style=dict(width="40%", height="400px",background="white",margin="10px",padding="15px")),
+        html.Div(className="Element", children = [
+            html.Label("District Tabular"),
+        ], style=dict(width="60%", height="500px",background="white",margin="10px",padding="15px")),
+    ], style=dict(display='flex'))
+
+
+], style = {'background': '#F2F2F2'})
+
+
+if __name__ == '__main__':
+    app.run_server(host='0.0.0.0',port=8044,debug=True)
+
+

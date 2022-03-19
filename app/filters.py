@@ -1,44 +1,69 @@
-import pandas as pd
-import numpy as np
+from filter_values import LoadFilterValues
+from dash import dcc
 
-#Load dataset
-csv_crime = r"E:\Lectures\526DATA INT VIS ANALYT\P\Crimes_-_2001_to_Present.csv"
-df = pd.read_csv(csv_crime)
+class FilterCreation:
+    def __init__(self):
+        self.filter_vals = LoadFilterValues()
 
-#Drop rows where Location is missing
-df.dropna(subset=["Location"], axis=0, inplace=True)
+    def dropdown_filter(self, filter_type):
+        options = []
+        vals = []
+        placeholder = ""
+        if filter_type == "crime_type":
+            vals = self.filter_vals.get_crime_types()
+            for val in vals:
+                options.append({"label":val.capitalize(), "value": val.capitalize()})
+            placeholder = "Select crime types..."
+        elif filter_type == "days_of_week":
+            vals = self.filter_vals.get_days_of_week()
+            for val in vals:
+                options.append({"label":val.capitalize(), "value": val.capitalize()})
+            placeholder = "Select days of week..."
+        elif filter_type == "arrest":
+            options.append({"label":"Arrested", "value":True})
+            options.append({"label":"Not Arrested", "value":False})
+            placeholder = "Choose arrest types..."
+        elif filter_type == "domestic":
+            options.append({"label":"Domestic Crime", "value":True})
+            options.append({"label":"Non Domestic", "value":False})
+            placeholder = "Choose domestic/non-domestic types..."
+        elif filter_type == "months":
+            vals = self.filter_vals.get_months()
+            for num, name in vals.items():
+                options.append({"label":name, "value":num})
+            placeholder = "Select months..."
+        elif filter_type == "districts":
+            vals = self.filter_vals.get_police_districts()
+            for num, name in vals.items():
+                options.append({"label": name, "value": num})
+            placeholder = "Choose districts..."
+        
+        create_filter = dcc.Dropdown(
+            options = options,
+            multi = True,
+            searchable = True,
+            placeholder = placeholder
+        )
 
-#Parsing Date Time
-df['Datetime'] = pd.to_datetime(df['Date'])
-df['Day'] = df['Datetime'].dt.day_name()
-df['Time'] = [d.time() for d in df['Datetime']]
-df['Date'] = [d.date() for d in df['Datetime']]
-df['Month'] = df['Datetime'].apply(lambda x: x.month)
-df['Year'] = df['Datetime'].apply(lambda x: x.year)
+        return create_filter
 
-#Save to csv
-df.to_csv(r'E:\Lectures\526DATA INT VIS ANALYT\P\Crimes_2_19.csv')
+    def range_selector(self, selector_type, count=0):
+        range_vals = []
+        min = 0
+        max = 0
+        if selector_type == "years":
+            range_vals.extend(self.filter_vals.get_years())
+            min = range_vals[0]
+            max = range_vals[-1]
+        
+        create_slider = dcc.RangeSlider(
+            min,
+            max,
+            step=1,
+            dots=False,
+            marks=None,
+            value = [min, max],
+            tooltip = {'placement':'bottom', 'always_visible':True}
+        )
 
-#Load csv
-df = pd.read_csv(r'E:\Lectures\526DATA INT VIS ANALYT\P\Crimes_2_19.csv')
-df = df.set_index('Datetime')
-
-#Total crimes for each year
-df['Year'].value_counts()
-
-#Total crimes for each month by year
-query_year = 2017
-df[df['Year']==query_year].groupby("Month")["Month"].count()
-
-#Total crimes by primary type
-df.groupby("Primary Type")["Primary Type"].count().sort_values(ascending=False)
-
-#Crime trend yearly
-df.groupby("Year")["Year"].count().sort_values()
-
-#Dangerous block
-df.groupby("Block")["Block"].count().sort_values(ascending=False)
-
-#Saftest date by year
-query_year = 2019
-df[df['Year']==query_year].groupby("Date")["Date"].count().sort_values()
+        return create_slider
