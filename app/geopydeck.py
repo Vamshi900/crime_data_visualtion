@@ -5,8 +5,8 @@ import dash
 import dash_deck
 from dash import html
 
-lat=40.7
-lon=-74
+lat=41.8151
+lon=-87.67
 zoom=10
 mapbox_api_token = "pk.eyJ1IjoidmFtc2hpOTYiLCJhIjoiY2wwZnRwNG1uMHUyYjNqb2lhbGRjbTMydCJ9.BveaAINhSJscgd_FiC9Ihw"
 data = pd.read_csv('./geodata/processed_crimes_sample.csv')
