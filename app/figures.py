@@ -20,7 +20,8 @@ class FiguresCreation:
                 )
         fig2.update_layout(margin = dict(t=10, l=0, r=0, b=10))
         return fig2
-
+    
+    #function to create ranking table
     def create_ranking(self):
         fil_obj = LoadFilterValues(self.data_frame)
         dist_name_map = fil_obj.get_police_districts()
@@ -29,6 +30,7 @@ class FiguresCreation:
         tp_df = (tp_df[["District","Primary Type"]].groupby(["District","Primary Type"],as_index=False)
                  .agg(total_case=('Primary Type', 'count'))
                  .sort_values(["District",'total_case'], ascending=False))
+        tp_df = tp_df.groupby(['District']).head(5)
         """
         last_district = None
         records = []
