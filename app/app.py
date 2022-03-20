@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, dash_table
 from filters import FilterCreation
 from geoplot import GeoPlot
 import pandas as pd
@@ -12,6 +12,9 @@ filters = FilterCreation(data_frame)
 geo_plot = GeoPlot(data_frame)
 df_slice_obj = LoadFilterValues(data_frame)
 figures = FiguresCreation(data_frame)
+
+#initilize ranking table
+table_records_intitial, table_style_initial = figures.create_ranking()
 
 # dashboard layout code
 app.layout = html.Div([
@@ -74,7 +77,20 @@ app.layout = html.Div([
         html.Div(className="Element", children = [
             html.Label("District Tabular"),
         ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px")),
-    ], style=dict(display='flex'))
+    ], style=dict(display='flex')),
+    
+    #add Div for ranking table
+     html.Div(className="ranking_table", children=[
+                    dash_table.DataTable(id='table1', columns=[
+                            {'name': 'District', 'id': 'District'},
+                            {'name': 'Primary Type', 'id': 'Primary Type'},
+                            {'name': 'Number of Cases', 'id': 'total_case'},
+                        ],
+                        data=table_records_intitial,
+                        style_data_conditional=table_style_initial,
+                        style_as_list_view=True,
+                    )
+                ])
 
 
 ], style = {'background': '#F9F9F9'})
