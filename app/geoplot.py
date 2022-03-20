@@ -1,31 +1,47 @@
 import pydeck as pdk
 import pandas as pd
+import dash_deck
 
-class geoMap:
-    def __init__(self):
-        self.district_data = pd.read_csv("dist_20.csv")
-    
-    def get_map(self):
-        layer = pdk.Layer(
-            'HexagonLayer',  # `type` positional argument is here
-            self.district_data,
-            get_position=['long', 'lat'],
-            auto_highlight=True,
-            elevation_scale=50,
-            pickable=True,
-            elevation_range=[0, 3000],
-            extruded=True,
-            coverage=1)
+class GeoPlot:
+    def __init__(self, data_frame):
+        self.lat=41.769448846
+        self.lon=-87.594177051
+        self.zoom=10.1
+        self.mapbox_api_token = "pk.eyJ1IjoidmFtc2hpOTYiLCJhIjoiY2wwZnRwNG1uMHUyYjNqb2lhbGRjbTMydCJ9.BveaAINhSJscgd_FiC9Ihw"
+        self.data = data_frame
 
-        # Set the viewport location
-        view_state = pdk.ViewState(
-            longitude=-87.74597835776501,
-            latitude=41.90235233193659,
-            zoom=6,
-            min_zoom=5,
-            max_zoom=15,
-            pitch=40.5,
-            bearing=-27.36)
+    def get_geoplot(self):
+        map_plot = pdk.Deck(
+            map_style="mapbox://styles/mapbox/light-v10",
+            initial_view_state={
+                "latitude": self.lat,
+                "longitude": self.lon,
+                "zoom": self.zoom,
+                "pitch": 55,
+            },
+            layers=[
+                pdk.Layer(
+                    "HexagonLayer",
+                    data=self.data,
+                    get_position=["Longitude", "Latitude"],
+                    radius=100,
+                    elevation_scale=4,
+                    elevation_range=[0, 1000],
+                    pickable=True,
+                    extruded=True,
+                    auto_highlight=True,
+                    filled=True,
+                    coverage=1
+                ),
+            ],
+            tooltip={
+                'html': '<b>Elevation Value:</b> {elevationValue}',
+                'style': {
+                    'color': 'white'
+                }
+            }
+        )
 
-        map = pdk.Deck(layers=[layer], initial_view_state=view_state)
-        map.to_html('district.html')
+        deck_component = dash_deck.DeckGL(map_plot.to_json(), id="deck-gl", tooltip=True, mapboxKey=self.mapbox_api_token)
+        
+        return deck_component

@@ -1,9 +1,8 @@
 import pandas as pd
 
 class LoadFilterValues:
-    def __init__(self):
-        self.processed_data = "../processed_crimes_sample.csv"
-        self.data_frame = pd.read_csv(self.processed_data)
+    def __init__(self, data_frame):
+        self.data_frame = data_frame
 
     def get_crime_types(self):
         types = self.data_frame["Primary Type"].unique()
@@ -29,3 +28,15 @@ class LoadFilterValues:
                         17  : "Albany Park", 18  : "Near North", 19  : "Town Hall", 20  : "Lincoln", 22  : "Morgan Park",
                         24  : "Rogers Park", 25  : "Grand Central"}
         return district_map
+    
+    def create_selection(self, years=[2001, 2022], types=[], districts=[], months=[]):
+        temp_data_frame = self.data_frame
+        if len(years) > 0:
+            temp_data_frame = temp_data_frame.loc[temp_data_frame["Year"].isin(year for year in range(years[0], years[1]+1))]
+        if len(districts) > 0:
+            temp_data_frame = temp_data_frame.loc[temp_data_frame["District"].isin(districts)]
+        if len(months) > 0:
+            temp_data_frame = temp_data_frame.loc[temp_data_frame["Month"].isin(months)]
+        if len(types) > 0:
+            temp_data_frame = temp_data_frame.loc[temp_data_frame["Primary Type"].isin(type.upper() for type in types)]
+        return temp_data_frame

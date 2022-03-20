@@ -2,8 +2,8 @@ from filter_values import LoadFilterValues
 from dash import dcc
 
 class FilterCreation:
-    def __init__(self):
-        self.filter_vals = LoadFilterValues()
+    def __init__(self, data_frame):
+        self.filter_vals = LoadFilterValues(data_frame)
 
     def dropdown_filter(self, filter_type):
         options = []
@@ -42,7 +42,9 @@ class FilterCreation:
             options = options,
             multi = True,
             searchable = True,
-            placeholder = placeholder
+            placeholder = placeholder,
+            value = [],
+            id = "id_dropdown_"+filter_type
         )
 
         return create_filter
@@ -63,7 +65,8 @@ class FilterCreation:
             dots=False,
             marks=None,
             value = [min, max],
-            tooltip = {'placement':'bottom', 'always_visible':True}
+            tooltip = {'placement':'bottom', 'always_visible':True},
+            id = "id_slider_"+selector_type
         )
 
         return create_slider
