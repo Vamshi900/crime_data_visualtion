@@ -86,7 +86,7 @@ app.layout = html.Div([
                             {'name': 'Primary Type', 'id': 'Primary Type'},
                             {'name': 'Number of Cases', 'id': 'total_case'},
                         ],
-                        data=table_records_intitial,
+                        data=table_records_intitial.to_dict('records'),
                         style_data_conditional=table_style_initial,
                         style_as_list_view=True,
                     )
