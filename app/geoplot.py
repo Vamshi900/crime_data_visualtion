@@ -33,15 +33,14 @@ class GeoPlot:
                     filled=True,
                     coverage=1
                 ),
-            ],
-            tooltip={
-                'html': '<b>Elevation Value:</b> {elevationValue}',
-                'style': {
-                    'color': 'white'
-                }
-            }
+            ]
         )
-
-        deck_component = dash_deck.DeckGL(map_plot.to_json(), id="deck-gl", tooltip=True, mapboxKey=self.mapbox_api_token)
+        tooltip={
+            'html': '<b>Total Cases:</b> {elevationValue}',
+            'style': {
+                'color': 'white'
+            }
+        }
+        deck_component = dash_deck.DeckGL(map_plot.to_json(), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
         
         return deck_component

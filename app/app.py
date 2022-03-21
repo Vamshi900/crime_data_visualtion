@@ -27,9 +27,9 @@ app.layout = html.Div([
     ),
 
     dcc.Tabs(id="tabs", value='tab-1-visualization', children=[
-        dcc.Tab(label='Visualization', value='tab-1-visualization'),
-        dcc.Tab(label='Prediction', value='tab-2-prediction'),
-    ], style=dict(padding="15px", color="#F9F9F9")),
+        dcc.Tab(label='Crime Visualization in Chicago', value='tab-1-visualization'),
+        dcc.Tab(label='Crime Prediction in Chicago', value='tab-2-prediction'),
+    ], style=dict(padding="15px")),
 
     html.Div(
         className = "row", children = [
@@ -61,7 +61,9 @@ app.layout = html.Div([
             dcc.Graph(id='sunburst_plot', figure=figures.create_sunburst())
         ], style=dict(width="40%", height="400px",background="#F9F9F9",margin="10px",padding="15px"))
     ],style=dict(display='flex')),
-
+    html.Br(),
+    html.Br(),
+    html.Br(),
     html.Div(className = "charts_table", children=[
         html.Div(className="MinMap", id="min_map", children = [
             html.Div(className="MinMap", id="min_map1", children = [
@@ -75,14 +77,9 @@ app.layout = html.Div([
             ], style=dict(width="20%", height="380px",background="#F9F9F9",margin="10px",padding="15px"))
         ],style=dict(display='flex')),
         html.Div(className="Element", children = [
-            html.Label("District Tabular"),
-        ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px")),
-    ], style=dict(display='flex')),
-    
-    #add Div for ranking table
-     html.Div(className="ranking_table", children=[
+            html.Div(className="ranking_table", children=[
                     dash_table.DataTable(id='table1', columns=[
-                            {'name': 'District', 'id': 'District'},
+                            {'name': 'District', 'id': 'District_Name'},
                             {'name': 'Primary Type', 'id': 'Primary Type'},
                             {'name': 'Number of Cases', 'id': 'total_case'},
                         ],
@@ -91,7 +88,8 @@ app.layout = html.Div([
                         style_as_list_view=True,
                     )
                 ])
-
+        ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px",overflowY="auto")),
+    ], style=dict(display='flex')),
 
 ], style = {'background': '#F9F9F9'})
 
@@ -99,7 +97,9 @@ app.layout = html.Div([
 @app.callback(
     [Output("count_display", "children"),
      Output("pydeck_map", "children"),
-     Output("sunburst_plot", "figure")],
+     Output("sunburst_plot", "figure"),
+     Output("table1", "data"),
+     Output("table1", "style_data_conditional")],
     [Input("id_slider_years", "value"),
      Input("id_dropdown_crime_type", "value"),
      Input("id_dropdown_districts", "value"),
@@ -118,9 +118,10 @@ def load_pydeck_map_data(years, types, districts, months):
     new_geo_obj = GeoPlot(new_data_frame)
     changed_count = "**Total Cases: {}**".format(str(new_data_frame["ID"].count()))
     fig_obj = FiguresCreation(new_data_frame)
-    return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst())
+    table_data, table_style = fig_obj.create_ranking()
+    return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst(), table_data.to_dict("records"), table_style)
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',port=8052,debug=True)
+    app.run_server(host='0.0.0.0',port=8010,debug=True)
 
 
