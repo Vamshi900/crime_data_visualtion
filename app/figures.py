@@ -12,7 +12,11 @@ class FiguresCreation:
         req_dist = self.data_frame["District"].unique()
         tp_df = self.data_frame
         tp_df["District_Name"] = tp_df["District"].map(dist_name_map)
-        fig = px.sunburst(tp_df, path=['District_Name', 'Primary Type'], values='ID')
+        tp_df = (tp_df[["District_Name","Primary Type"]].groupby(["District_Name","Primary Type"],as_index=False)
+                 .agg(total_case=('Primary Type', 'count'))
+                 .sort_values(["District_Name",'total_case'], ascending=False))
+        tp_df = tp_df.groupby(['District_Name']).head(5)
+        fig = px.sunburst(tp_df, path=['District_Name', 'Primary Type'], values='total_case')
         fig2 =go.Figure(go.Sunburst(
                 labels=fig['data'][0]['labels'].tolist(),
                 parents=fig['data'][0]['parents'].tolist(),
@@ -27,20 +31,11 @@ class FiguresCreation:
         dist_name_map = fil_obj.get_police_districts()
         tp_df = self.data_frame
         tp_df["District_Name"] = tp_df["District"].map(dist_name_map)
-        tp_df = (tp_df[["District","Primary Type"]].groupby(["District","Primary Type"],as_index=False)
+        tp_df = (tp_df[["District_Name","Primary Type"]].groupby(["District_Name","Primary Type"],as_index=False)
                  .agg(total_case=('Primary Type', 'count'))
-                 .sort_values(["District",'total_case'], ascending=False))
-        tp_df = tp_df.groupby(['District']).head(5)
-        """
-        last_district = None
-        records = []
-        for i, record in tp_df[['District', 'Primary Type', 'total_case']].iterrows():
-            if record['District'] != last_district:
-                last_district = record['District']
-            else:
-                record['District'] = ''  # don't repeat borough
-        records.append(record)
-        """
+                 .sort_values(["District_Name",'total_case'], ascending=False))
+        tp_df = tp_df.groupby(['District_Name']).head(5)
+        
         return tp_df, data_bars(tp_df, 'total_case')
 
 def data_bars(df, column):
