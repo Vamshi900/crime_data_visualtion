@@ -1,0 +1,5 @@
+numpy
+pandas
+dash
+plotly
+dash-cytoscape==0.2.0
