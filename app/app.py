@@ -121,6 +121,6 @@ def load_pydeck_map_data(years, types, districts, months):
     return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst())
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',port=8052,debug=True)
+    app.run_server(host='0.0.0.0',port=5000,debug=True)
 
 
