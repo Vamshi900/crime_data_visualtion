@@ -1,4 +1,5 @@
 import pandas as pd
+import math
 
 import dash
 from dash.dependencies import Input, Output
@@ -7,6 +8,8 @@ import dash_html_components as html
 
 import dash_cytoscape as cyto
 import numpy as np
+import plotly.express as px
+
 
 app = dash.Dash(__name__)
 server = app.server
@@ -53,8 +56,8 @@ stylesheet = [
         'style': {
             "opacity": 0.9,
             "label": "data(label)", #Label of node to display
-            "background-color": "#07ABA0", #node color
-            "color": "#008B80" #node label color
+            # "background-color": "#07ABA0", #node color
+            # "color": "#008B80" #node label color
         }
     },
     {
@@ -67,6 +70,20 @@ stylesheet = [
             'curve-style': 'bezier' #Default curve-If it is style, the arrow will not be displayed, so specify it
     }
 }]
+
+col_swatch = px.colors.qualitative.Dark24
+
+
+
+edge_count= len(cy_edges)
+node_count= len(cy_nodes)
+stylesheet += [
+    {
+        "selector": "." + str(i),
+        "style": {"background-color": col_swatch[i%5], "line-color": col_swatch[i%5]},
+    }
+    for i in range(node_count)
+]
 
 # define layout
 app.layout = html.Div([
@@ -84,6 +101,7 @@ app.layout = html.Div([
         style={'width': '50%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}
     ),
     html.Label('Choose Graph style',style={'text-align': 'center'}),
+    
     dcc.Dropdown(
             id='dropdown-layout',
             options=[
@@ -102,6 +120,17 @@ app.layout = html.Div([
             ], value='grid',
             style={'width': '50%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}
         ),
+    
+    html.Label(f'Number of edges ',style={'text-align': 'center'}),
+    # display count of edges as text
+    html.Div(id='edge-count', style={'text-align': 'left'}, children=f'{edge_count}'),
+ 
+
+    html.Label(f'Number of Nodes :',style={'text-align': 'Center'}),
+    # display count of nodes as text
+    html.Div(id='node-count', style={'text-align': 'left'},children=f'{node_count}'),
+   
+
     html.Div(children=[
         cyto.Cytoscape(
             id='cytoscape',
@@ -112,20 +141,19 @@ app.layout = html.Div([
             },
             stylesheet=stylesheet
         )
-    ])
+    ], style={ 'margin-left': '50px','width':'90%', 'margin-right': '50px','border': '3px solid red'})
 ])
 
 
 
 @app.callback(Output('cytoscape', 'layout'),
-              [Input('dropdown-layout', 'value'),
-              Input('dataset', 'value')])
+              [Input('dropdown-layout', 'value')])
 def update_cytoscape_layout(layout):
-    return {'name': layout, 'animate': True}
+    return {'name': layout}
 
 
 
-@app.callback(Output('cytoscape', 'elements'),
+@app.callback([Output('cytoscape', 'elements'),Output('edge-count', 'children'),Output('node-count', 'children')],
               [Input('dataset', 'value')])
 def update_dataset(dataset):
     edges = pd.read_csv('./Dataset/'+dataset+'.txt', header=None)
@@ -147,11 +175,12 @@ def update_dataset(dataset):
 
         cy_edges.append({
             'data': {
+                "id": str(index),
                 'source': source,
                 'target': target
             }
         })
-    return cy_edges + cy_nodes
+    return ( (cy_edges + cy_nodes),f'{len(cy_edges)} ~ 2** {math.log2(len(cy_edges)) }',len(cy_nodes))
 
 if __name__ == '__main__':
     app.run_server(debug=False)
