@@ -2,25 +2,31 @@
 from dash import Dash, html, dcc, Input, Output, dash_table
 # custom filters
 from filters.filters import FilterCreation
-from filter_values.filter_values import LoadFilterValues
+# from filter_values.filter_values import LoadFilterValues
+from filter_values.vaex_filtes import LoadFilterValues
 # geo plots
 from figures.geoplot import GeoPlot
-import pandas as pd
-# figues import 
 from figures.figures import FiguresCreation
+import vaex as vx
+# figues import 
 
 # app init
 app = Dash(__name__)
 
 # intial data load
-data_frame = pd.read_csv("./dataset/processed_crimes_sample_5000.csv")
+# data_frame = pd.read_csv("./dataset/processed_crimes_sample_5000.csv")
+# read data frame using vaex 
+data_frame = vx.from_csv("./dataset/processed_crimes_sample_5000.csv")
+
 filters = FilterCreation(data_frame)
-geo_plot = GeoPlot(data_frame)
 df_slice_obj = LoadFilterValues(data_frame)
 figures = FiguresCreation(data_frame)
+figures = FiguresCreation(data_frame)
+geo_plot = GeoPlot(data_frame)
+
 
 # initilize ranking table
-table_records_intitial, table_style_initial = figures.create_ranking()
+# table_records_intitial, table_style_initial = figures.create_ranking()
 
 # dashboard layout code
 app.layout = html.Div([
@@ -85,17 +91,17 @@ app.layout = html.Div([
             ], style=dict(width="20%", height="380px", background="#F9F9F9", margin="10px", padding="15px"))
         ], style=dict(display='flex')),
         html.Div(className="Element", children=[
-            html.Div(className="ranking_table", children=[
-                dash_table.DataTable(id='table1', columns=[
-                    {'name': 'District', 'id': 'District_Name'},
-                    {'name': 'Primary Type', 'id': 'Primary Type'},
-                    {'name': 'Number of Cases', 'id': 'total_case'},
-                ],
-                    data=table_records_intitial.to_dict('records'),
-                    style_data_conditional=table_style_initial,
-                    style_as_list_view=True,
-                )
-            ])
+            # html.Div(className="ranking_table", children=[
+            #     dash_table.DataTable(id='table1', columns=[
+            #         {'name': 'District', 'id': 'District_Name'},
+            #         {'name': 'Primary Type', 'id': 'Primary Type'},
+            #         {'name': 'Number of Cases', 'id': 'total_case'},
+            #     ],
+            #         data=table_records_intitial.to_dict('records'),
+            #         style_data_conditional=table_style_initial,
+            #         style_as_list_view=True,
+            #     )
+            # ])
         ], style=dict(width="60%", height="500px", background="#F9F9F9", margin="10px", padding="15px", overflowY="auto")),
     ], style=dict(display='flex')),
 
@@ -106,8 +112,9 @@ app.layout = html.Div([
     [Output("count_display", "children"),
      Output("pydeck_map", "children"),
      Output("sunburst_plot", "figure"),
-     Output("table1", "data"),
-     Output("table1", "style_data_conditional")],
+    #  Output("table1", "data"),
+    #  Output("table1", "style_data_conditional")],
+    ],
     [Input("id_slider_years", "value"),
      Input("id_dropdown_crime_type", "value"),
      Input("id_dropdown_districts", "value"),
@@ -128,8 +135,8 @@ def load_pydeck_map_data(years, types, districts, months):
     changed_count = "**Total Cases: {}**".format(
         str(new_data_frame["ID"].count()))
     fig_obj = FiguresCreation(new_data_frame)
-    table_data, table_style = fig_obj.create_ranking()
-    return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst(), table_data.to_dict("records"), table_style)
+    # table_data, table_style = fig_obj.create_ranking()
+    return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst())
 
 
 if __name__ == '__main__':

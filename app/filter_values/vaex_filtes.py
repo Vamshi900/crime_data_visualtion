@@ -1,4 +1,3 @@
-import pandas as pd
 import vaex as vx 
 
 
@@ -35,11 +34,11 @@ class LoadFilterValues:
     def create_selection(self, years=[2001, 2022], types=[], districts=[], months=[]):
         temp_data_frame = self.data_frame
         if len(years) > 0:
-            temp_data_frame = temp_data_frame.loc[temp_data_frame["Year"].isin(year for year in range(years[0], years[1]+1))]
+            temp_data_frame = temp_data_frame.select(temp_data_frame.Year.isin(years), mode='and')
         if len(districts) > 0:
-            temp_data_frame = temp_data_frame.loc[temp_data_frame["District"].isin(districts)]
+            temp_data_frame = temp_data_frame.select(temp_data_frame.District.isin(districts), mode='and')
         if len(months) > 0:
-            temp_data_frame = temp_data_frame.loc[temp_data_frame["Month"].isin(months)]
+            temp_data_frame = temp_data_frame.select(temp_data_frame.Month.isin(months), mode='and')
         if len(types) > 0:
-            temp_data_frame = temp_data_frame.loc[temp_data_frame["Primary Type"].isin(type.upper() for type in types)]
+            temp_data_frame = temp_data_frame.select(temp_data_frame["Primary Type"].isin(types), mode='and')
         return temp_data_frame

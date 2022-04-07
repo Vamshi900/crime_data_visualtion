@@ -1,6 +1,8 @@
 import plotly.express as px
 import plotly.graph_objects as go
 from filter_values.filter_values import LoadFilterValues
+import vaex as vx
+
 
 class FiguresCreation:
     def __init__(self, data_frame):
@@ -12,31 +14,35 @@ class FiguresCreation:
         req_dist = self.data_frame["District"].unique()
         tp_df = self.data_frame
         tp_df["District_Name"] = tp_df["District"].map(dist_name_map)
-        tp_df = (tp_df[["District_Name","Primary Type"]].groupby(["District_Name","Primary Type"],as_index=False)
+        tp_df = (tp_df[["District_Name", "Primary Type"]].groupby(["District_Name", "Primary Type"])
                  .agg(total_case=('Primary Type', 'count'))
-                 .sort_values(["District_Name",'total_case'], ascending=False))
+                 .sort_values(["District_Name", 'total_case'], ascending=False))
         tp_df = tp_df.groupby(['District_Name']).head(5)
-        fig = px.sunburst(tp_df, path=['District_Name', 'Primary Type'], values='total_case')
-        fig2 =go.Figure(go.Sunburst(
+        fig = px.sunburst(
+            tp_df, path=['District_Name', 'Primary Type'], values='total_case')
+        fig2 = go.Figure(go.Sunburst(
                 labels=fig['data'][0]['labels'].tolist(),
                 parents=fig['data'][0]['parents'].tolist(),
                 ids=fig['data'][0]['ids'].tolist())
                 )
-        fig2.update_layout(margin = dict(t=10, l=0, r=0, b=10))
+        fig2.update_layout(margin=dict(t=10, l=0, r=0, b=10))
         return fig2
-    
-    #function to create ranking table
+
+    # function to create ranking table
     def create_ranking(self):
         fil_obj = LoadFilterValues(self.data_frame)
         dist_name_map = fil_obj.get_police_districts()
         tp_df = self.data_frame
         tp_df["District_Name"] = tp_df["District"].map(dist_name_map)
-        tp_df = (tp_df[["District_Name","Primary Type"]].groupby(["District_Name","Primary Type"],as_index=False)
-                 .agg(total_case=('Primary Type', 'count'))
-                 .sort_values(["District_Name",'total_case'], ascending=False))
-        tp_df = tp_df.groupby(['District_Name']).head(5)
+
+        tp_df = (tp_df[["District_Name", "Primary Type"]].groupby(by=["District_Name", "Primary Type"])
+                #  .agg({"total_case": vx.agg.sum('Primary Type')})
+                 .sort(["District_Name", 'total_case'], ascending=False))
         
+        tp_df = tp_df.groupby(['District_Name']).head(5)
+
         return tp_df, data_bars(tp_df, 'total_case')
+
 
 def data_bars(df, column):
     n_bins = 100
@@ -54,15 +60,16 @@ def data_bars(df, column):
             'if': {
                 'filter_query': (
                     '{{{column}}} >= {min_bound}' +
-                    (' && {{{column}}} < {max_bound}' if (i < len(bounds) - 1) else '')
+                    (' && {{{column}}} < {max_bound}' if (
+                        i < len(bounds) - 1) else '')
                 ).format(column=column, min_bound=min_bound, max_bound=max_bound),
                 'column_id': column
             },
             'background': (
                 """
                     linear-gradient(90deg,
-                    #96dbfa 0%,
-                    #96dbfa {max_bound_percentage}%,
+                    # 96dbfa 0%,
+                    # 96dbfa {max_bound_percentage}%,
                     white {max_bound_percentage}%,
                     white 100%)
                 """.format(max_bound_percentage=max_bound_percentage)

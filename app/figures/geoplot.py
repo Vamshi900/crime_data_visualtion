@@ -1,5 +1,4 @@
 import pydeck as pdk
-import pandas as pd
 import dash_deck
 
 class GeoPlot:
