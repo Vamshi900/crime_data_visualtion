@@ -1,97 +1,105 @@
+# libaries
 from dash import Dash, html, dcc, Input, Output, dash_table
-from filters import FilterCreation
+# custom filters
+from filters.filters import FilterCreation
+from filters.filter_values import LoadFilterValues
+# geo plots
 from geoplot import GeoPlot
 import pandas as pd
-from filter_values import LoadFilterValues
+# figues import 
 from figures import FiguresCreation
 
+# app init
 app = Dash(__name__)
 
+# intial data load
 data_frame = pd.read_csv("processed_crimes_sample_5000.csv")
 filters = FilterCreation(data_frame)
 geo_plot = GeoPlot(data_frame)
 df_slice_obj = LoadFilterValues(data_frame)
 figures = FiguresCreation(data_frame)
 
-#initilize ranking table
+# initilize ranking table
 table_records_intitial, table_style_initial = figures.create_ranking()
 
 # dashboard layout code
 app.layout = html.Div([
     html.H1('Criminalytics: A visual tool for crime analysis',
             style={
-                'textAlign':'center',
+                'textAlign': 'center',
                 'paddingTop': '10px',
-                'color' : '#323232'
+                'color': '#323232'
             }
-    ),
+            ),
 
     dcc.Tabs(id="tabs", value='tab-1-visualization', children=[
-        dcc.Tab(label='Crime Visualization in Chicago', value='tab-1-visualization'),
+        dcc.Tab(label='Crime Visualization in Chicago',
+                value='tab-1-visualization'),
         dcc.Tab(label='Crime Prediction in Chicago', value='tab-2-prediction'),
     ], style=dict(padding="15px")),
 
     html.Div(
-        className = "row", children = [
-            html.Div(className="Element", children = [
+        className="row", children=[
+            html.Div(className="Element", children=[
                 html.Label("Select Years"),
                 filters.range_selector("years")
-            ], style=dict(width="25%",background="#F9F9F9",margin="10px",padding="15px")),
-            html.Div(className="Element", children = [
+            ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px")),
+            html.Div(className="Element", children=[
                 html.Label("Select Crime Type"),
                 filters.dropdown_filter("crime_type")
-            ], style=dict(width="25%",background="#F9F9F9",margin="10px",padding="15px")),
-            html.Div(className="Element", id="filter_district", children = [
+            ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px")),
+            html.Div(className="Element", id="filter_district", children=[
                 html.Label("Select Districts"),
                 filters.dropdown_filter("districts")
-            ], style=dict(width="25%",background="#F9F9F9",margin="10px",padding="15px")),
-            html.Div(className="Element", children = [
+            ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px")),
+            html.Div(className="Element", children=[
                 html.Label("Select Month"),
                 filters.dropdown_filter("months")
-            ], style=dict(width="25%",background="#F9F9F9",margin="10px",padding="15px"))
+            ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px"))
         ], style=dict(display='flex')
     ),
 
-    html.Div(className="Maps", children = [
-        html.Div(className="MainMap", id="main_map", children = [
+    html.Div(className="Maps", children=[
+        html.Div(className="MainMap", id="main_map", children=[
             dcc.Markdown(id="count_display", children=[]),
-            html.Div(children= [geo_plot.get_geoplot()], style=dict(width="55.5%", height="360px", position="absolute"), id="pydeck_map")
-        ], style=dict(width="60%", height="400px",background="#F9F9F9",margin="10px",padding="15px")),
-        html.Div(className="Element", children = [
+            html.Div(children=[geo_plot.get_geoplot()], style=dict(
+                width="55.5%", height="360px", position="absolute"), id="pydeck_map")
+        ], style=dict(width="60%", height="400px", background="#F9F9F9", margin="10px", padding="15px")),
+        html.Div(className="Element", children=[
             dcc.Graph(id='sunburst_plot', figure=figures.create_sunburst())
-        ], style=dict(width="40%", height="400px",background="#F9F9F9",margin="10px",padding="15px"))
-    ],style=dict(display='flex')),
+        ], style=dict(width="40%", height="400px", background="#F9F9F9", margin="10px", padding="15px"))
+    ], style=dict(display='flex')),
     html.Br(),
     html.Br(),
     html.Br(),
-    html.Div(className = "charts_table", children=[
-        html.Div(className="MinMap", id="min_map", children = [
-            html.Div(className="MinMap", id="min_map1", children = [
+    html.Div(className="charts_table", children=[
+        html.Div(className="MinMap", id="min_map", children=[
+            html.Div(className="MinMap", id="min_map1", children=[
                 html.Label("Map2")
-            ], style=dict(width="20%", height="380px",background="#F9F9F9",margin="10px",padding="15px")),
-            html.Div(className="MinMap", id="min_map2", children = [
+            ], style=dict(width="20%", height="380px", background="#F9F9F9", margin="10px", padding="15px")),
+            html.Div(className="MinMap", id="min_map2", children=[
                 html.Label("Map3")
-            ], style=dict(width="20%", height="380px",background="#F9F9F9",margin="10px",padding="15px")),
-            html.Div(className="MinMap", id="min_map3", children = [
+            ], style=dict(width="20%", height="380px", background="#F9F9F9", margin="10px", padding="15px")),
+            html.Div(className="MinMap", id="min_map3", children=[
                 html.Label("Map4")
-            ], style=dict(width="20%", height="380px",background="#F9F9F9",margin="10px",padding="15px"))
-        ],style=dict(display='flex')),
-        html.Div(className="Element", children = [
+            ], style=dict(width="20%", height="380px", background="#F9F9F9", margin="10px", padding="15px"))
+        ], style=dict(display='flex')),
+        html.Div(className="Element", children=[
             html.Div(className="ranking_table", children=[
-                    dash_table.DataTable(id='table1', columns=[
-                            {'name': 'District', 'id': 'District_Name'},
-                            {'name': 'Primary Type', 'id': 'Primary Type'},
-                            {'name': 'Number of Cases', 'id': 'total_case'},
-                        ],
-                        data=table_records_intitial.to_dict('records'),
-                        style_data_conditional=table_style_initial,
-                        style_as_list_view=True,
-                    )
-                ])
-        ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px",overflowY="auto")),
+                dash_table.DataTable(id='table1', columns=[
+                    {'name': 'District', 'id': 'District_Name'},
+                    {'name': 'Primary Type', 'id': 'Primary Type'},
+                    {'name': 'Number of Cases', 'id': 'total_case'},
+                ],
+                    data=table_records_intitial.to_dict('records'),
+                    style_data_conditional=table_style_initial,
+                    style_as_list_view=True,
+                )
+            ])
+        ], style=dict(width="60%", height="500px", background="#F9F9F9", margin="10px", padding="15px", overflowY="auto")),
     ], style=dict(display='flex')),
 
-], style = {'background': '#F9F9F9'})
+], style={'background': '#F9F9F9'})
 
 
 @app.callback(
@@ -114,14 +122,15 @@ def load_pydeck_map_data(years, types, districts, months):
         districts = []
     if months is None:
         months = []
-    new_data_frame = df_slice_obj.create_selection(years, types, districts, months)
+    new_data_frame = df_slice_obj.create_selection(
+        years, types, districts, months)
     new_geo_obj = GeoPlot(new_data_frame)
-    changed_count = "**Total Cases: {}**".format(str(new_data_frame["ID"].count()))
+    changed_count = "**Total Cases: {}**".format(
+        str(new_data_frame["ID"].count()))
     fig_obj = FiguresCreation(new_data_frame)
     table_data, table_style = fig_obj.create_ranking()
     return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst(), table_data.to_dict("records"), table_style)
 
+
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',port=5000,debug=True)
-
-
+    app.run_server(host='0.0.0.0', port=5000, debug=True)
