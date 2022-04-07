@@ -1,4 +1,6 @@
 import pandas as pd
+import vaex as vx 
+
 
 class LoadFilterValues:
     def __init__(self, data_frame):
