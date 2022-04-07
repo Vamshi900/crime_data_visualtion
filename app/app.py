@@ -4,7 +4,7 @@ from dash import Dash, html, dcc, Input, Output, dash_table
 from filters.filters import FilterCreation
 from filters.filter_values import LoadFilterValues
 # geo plots
-from geoplot import GeoPlot
+from figures.geoplot import GeoPlot
 import pandas as pd
 # figues import 
 from figures import FiguresCreation
