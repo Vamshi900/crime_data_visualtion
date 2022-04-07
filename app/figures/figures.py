@@ -1,6 +1,6 @@
 import plotly.express as px
 import plotly.graph_objects as go
-from filter_values import LoadFilterValues
+from filter_values.filter_values import LoadFilterValues
 
 class FiguresCreation:
     def __init__(self, data_frame):

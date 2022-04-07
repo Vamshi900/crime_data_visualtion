@@ -2,18 +2,18 @@
 from dash import Dash, html, dcc, Input, Output, dash_table
 # custom filters
 from filters.filters import FilterCreation
-from filters.filter_values import LoadFilterValues
+from filter_values.filter_values import LoadFilterValues
 # geo plots
 from figures.geoplot import GeoPlot
 import pandas as pd
 # figues import 
-from figures import FiguresCreation
+from figures.figures import FiguresCreation
 
 # app init
 app = Dash(__name__)
 
 # intial data load
-data_frame = pd.read_csv("processed_crimes_sample_5000.csv")
+data_frame = pd.read_csv("./dataset/processed_crimes_sample_5000.csv")
 filters = FilterCreation(data_frame)
 geo_plot = GeoPlot(data_frame)
 df_slice_obj = LoadFilterValues(data_frame)
