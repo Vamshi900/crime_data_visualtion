@@ -3,25 +3,30 @@ from dash import Dash, html, dcc, Input, Output, dash_table
 # custom filters
 from filters.filters import FilterCreation
 # from filter_values.filter_values import LoadFilterValues
-from filter_values.vaex_filtes import LoadFilterValues
+from filter_values.vaex_filtes import DataFilter
 # geo plots
 from figures.geoplot import GeoPlot
-from figures.figures import FiguresCreation
+from figures.figures import CreateFigures
 import vaex as vx
-# figues import 
+# figues import
 
 # app init
 app = Dash(__name__)
 
 # intial data load
 # data_frame = pd.read_csv("./dataset/processed_crimes_sample_5000.csv")
-# read data frame using vaex 
+# read data frame using vaex
 data_frame = vx.from_csv("./dataset/processed_crimes_sample_5000.csv")
 
-filters = FilterCreation(data_frame)
-df_slice_obj = LoadFilterValues(data_frame)
-figures = FiguresCreation(data_frame)
-figures = FiguresCreation(data_frame)
+filters = DataFilter(data_frame)
+
+# safe update the data frame in the filters
+DataFilter.update_data_frame(data_frame)
+
+
+df_slice_obj = DataFilter.create_selection(data_frame)
+
+figur
 geo_plot = GeoPlot(data_frame)
 
 
@@ -112,9 +117,9 @@ app.layout = html.Div([
     [Output("count_display", "children"),
      Output("pydeck_map", "children"),
      Output("sunburst_plot", "figure"),
-    #  Output("table1", "data"),
-    #  Output("table1", "style_data_conditional")],
-    ],
+     #  Output("table1", "data"),
+     #  Output("table1", "style_data_conditional")],
+     ],
     [Input("id_slider_years", "value"),
      Input("id_dropdown_crime_type", "value"),
      Input("id_dropdown_districts", "value"),
