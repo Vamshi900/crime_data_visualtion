@@ -5,11 +5,9 @@ from dash import Dash, html, dcc, Input, Output, dash_table
 from matplotlib.pyplot import figure
 
 # custom filters
-from filters.filters import FilterCreation
 # from filter_values.filter_values import LoadFilterValues
 from filter_values.vaex_filtes import DataFilter
 # geo plots
-from figures.geoplot import GeoPlot
 from figures.figures import CreateFigures
 import vaex as vx
 # figues import
@@ -22,7 +20,7 @@ app = Dash(__name__)
 # read data frame using vaex
 df = vx.from_csv("./dataset/processed_crimes_sample_5000.csv")
 
-print(df.dtypes)
+# print(df.dtypes)
 
 filters = DataFilter(df)
 
@@ -31,7 +29,7 @@ filters = DataFilter(df)
 
 print('total intialised',filters.get_total_cases())
 
-df_slice_obj = filters.create_selection(df)
+df_slice_obj = filters.create_selection()
 
 figureCreator = CreateFigures(df)
 
@@ -142,11 +140,11 @@ def update_selection(years, types, districts, months):
         districts = []
     if months is None:
         months = []
-    updated = DataFilter.create_selection(years, types, districts, months)
-
+    updated = filters.create_selection(years, types, districts, months)
+    
     figureCreator.update_data_frame(updated)
 
-    return DataFilter.get_total_cases()
+    return filters.get_total_cases()
 
 
 def update_geoplot(years, types, districts, months):

@@ -46,25 +46,21 @@ class DataFilter:
 
     # primary filter to cut the data frame 
     # always use the original data frame
-    def create_selection(self, years=[2001, 2022], types=[], districts=[1], months=[1]):
+    def create_selection(self, years=[2001, 2022], crim_types=[], districts=[1], months=[1]):
         temp_data_frame=None
         if temp_data_frame is None:
             temp_data_frame= self.data_frame.copy()
+
+        print('temp data',temp_data_frame.head(5))    
         if len(years) > 0:
-            val=years[0]
-            print('dtpe',type(val))
-            years = np.array(years, dtype=np.int64)
-            temp_data_frame = temp_data_frame.select(
-                temp_data_frame.Year.isin(years), mode='and')
+            print('years filter',years)
+            temp_data_frame = temp_data_frame.select(temp_data_frame["Year"].isin([2001,2002,2003]), mode='and')
         if len(districts) > 0:
-            temp_data_frame = temp_data_frame.select(
-                temp_data_frame.District.isin(districts), mode='and')
+            temp_data_frame = temp_data_frame.select(temp_data_frame.District.isin(districts), mode='and')
         if len(months) > 0:
-            temp_data_frame = temp_data_frame.select(
-                temp_data_frame.Month.isin(months), mode='and')
-        if len(types) > 0:
-            temp_data_frame = temp_data_frame.select(
-                temp_data_frame["Primary Type"].isin(types), mode='and')
+            temp_data_frame =temp_data_frame.select(temp_data_frame.Month.isin(months), mode='and')
+        if len(crim_types) > 0:
+            temp_data_frame = temp_data_frame.select(temp_data_frame["Primary Type"].isin(crim_types), mode='and')
 
         # update data frame based on primary filters
         self.update_data_frame(temp_data_frame)
