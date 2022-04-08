@@ -3,13 +3,25 @@ import plotly.graph_objects as go
 from filter_values.filter_values import LoadFilterValues
 import vaex as vx
 from dash import dcc
+import pydeck as pdk
+import dash_deck
 
 
 class CreateFigures:
     def __init__(self, data_frame):
-        pass
+        self.data_frame = data_frame
+        self.lat = 41.769448846
+        self.lon = -87.594177051
+        self.zoom = 10.1
+        self.mapbox_api_token = "pk.eyJ1IjoidmFtc2hpOTYiLCJhIjoiY2wwZnRwNG1uMHUyYjNqb2lhbGRjbTMydCJ9.BveaAINhSJscgd_FiC9Ihw"
+
+    # update the data frame for fallback
+    def update_data_frame(self, data_frame):
+        self.data_frame = data_frame
 
     def create_sunburst(self, tp_df):
+        if tp_df is None:
+            tp_df = self.data_frame
         fig = px.sunburst(
             tp_df, path=['District_Name', 'Primary Type'], values='total_case')
         fig2 = go.Figure(go.Sunburst(
@@ -22,9 +34,13 @@ class CreateFigures:
 
     # function to create ranking table
     def create_ranking(self, tp_df):
+        if tp_df is None:
+            tp_df = self.data_frame
         return self.data_bars(tp_df, 'total_case')
 
     def data_bars(self, df, column):
+        if df is None:
+            df = self.data_frame
         n_bins = 100
         bounds = [i * (1.0 / n_bins) for i in range(n_bins + 1)]
         ranges = [
@@ -129,3 +145,43 @@ class CreateFigures:
         )
 
         return create_filter
+
+    # function to create the pydeck map
+    def create_geoplot(self, data_frame):
+        if data_frame is None:
+            data_frame = self.data_frame
+
+        map_plot = pdk.Deck(
+            map_style="mapbox://styles/mapbox/light-v10",
+            initial_view_state={
+                "latitude": self.lat,
+                "longitude": self.lon,
+                "zoom": self.zoom,
+                "pitch": 55,
+            },
+            layers=[
+                pdk.Layer(
+                    "HexagonLayer",
+                    data=data_frame,
+                    get_position=["Longitude", "Latitude"],
+                    radius=100,
+                    elevation_scale=4,
+                    elevation_range=[0, 1000],
+                    pickable=True,
+                    extruded=True,
+                    auto_highlight=True,
+                    filled=True,
+                    coverage=1
+                ),
+            ]
+        )
+        tooltip = {
+            'html': '<b>Total Cases:</b> {elevationValue}',
+            'style': {
+                'color': 'white'
+            }
+        }
+        deck_component = dash_deck.DeckGL(map_plot.to_json(
+        ), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
+
+        return deck_component

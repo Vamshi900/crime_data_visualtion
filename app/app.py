@@ -1,5 +1,7 @@
 # libaries
+from this import d
 from dash import Dash, html, dcc, Input, Output, dash_table
+from matplotlib.pyplot import figure
 # custom filters
 from filters.filters import FilterCreation
 # from filter_values.filter_values import LoadFilterValues
@@ -26,8 +28,9 @@ DataFilter.update_data_frame(data_frame)
 
 df_slice_obj = DataFilter.create_selection(data_frame)
 
-figur
-geo_plot = GeoPlot(data_frame)
+figureCreator = CreateFigures(data_frame)
+
+geo_plot = figureCreator.create_geoplot(data_frame)
 
 
 # initilize ranking table
@@ -77,7 +80,7 @@ app.layout = html.Div([
                 width="55.5%", height="360px", position="absolute"), id="pydeck_map")
         ], style=dict(width="60%", height="400px", background="#F9F9F9", margin="10px", padding="15px")),
         html.Div(className="Element", children=[
-            dcc.Graph(id='sunburst_plot', figure=figures.create_sunburst())
+            dcc.Graph(id='sunburst_plot', figure=figureCreator.create_sunburst())
         ], style=dict(width="40%", height="400px", background="#F9F9F9", margin="10px", padding="15px"))
     ], style=dict(display='flex')),
     html.Br(),
@@ -115,8 +118,8 @@ app.layout = html.Div([
 
 @app.callback(
     [Output("count_display", "children"),
-     Output("pydeck_map", "children"),
-     Output("sunburst_plot", "figure"),
+    #  Output("pydeck_map", "children"),
+    #  Output("sunburst_plot", "figure"),
      #  Output("table1", "data"),
      #  Output("table1", "style_data_conditional")],
      ],
@@ -125,7 +128,7 @@ app.layout = html.Div([
      Input("id_dropdown_districts", "value"),
      Input("id_dropdown_months", "value")]
 )
-def load_pydeck_map_data(years, types, districts, months):
+def update_selection(years, types, districts, months):
     if years is None:
         years = []
     if types is None:
@@ -134,15 +137,25 @@ def load_pydeck_map_data(years, types, districts, months):
         districts = []
     if months is None:
         months = []
-    new_data_frame = df_slice_obj.create_selection(
-        years, types, districts, months)
-    new_geo_obj = GeoPlot(new_data_frame)
-    changed_count = "**Total Cases: {}**".format(
-        str(new_data_frame["ID"].count()))
-    fig_obj = FiguresCreation(new_data_frame)
-    # table_data, table_style = fig_obj.create_ranking()
-    return (changed_count, new_geo_obj.get_geoplot(), fig_obj.create_sunburst())
+    updated = DataFilter.create_selection(years, types, districts, months)
 
+    figureCreator.update_data_frame(updated)
+
+    return DataFilter.get_total_cases()
+
+
+def update_geoplot(years, types, districts, months):
+    if years is None:
+        years = []
+    if types is None:
+        types = []
+    if districts is None:
+        districts = []
+    if months is None:
+        months = []
+    new_data_frame = DataFilter.create_selection(years, types, districts, months)
+    new_geo_obj = GeoPlot(new_data_frame)
+    return new_geo_obj.get_geoplot()
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=5000, debug=True)
