@@ -1,10 +1,10 @@
 import vaex as vx
-
+import numpy as np
 
 class DataFilter:
     def __init__(self, data_frame):
-        self.data_frame = data_frame # update data frame based on primary filters
-        self.original_data_frame = data_frame # backup of original data frame
+        self.data_frame = data_frame.copy() # update data frame based on primary filters
+        self.original_data_frame = data_frame.copy() # backup of original data frame
     
     # static method to get days 
     def get_days_of_week(self):
@@ -46,9 +46,14 @@ class DataFilter:
 
     # primary filter to cut the data frame 
     # always use the original data frame
-    def create_selection(self, years=[2001, 2022], types=[], districts=[], months=[]):
-        temp_data_frame = self.original_data_frame.copy()
+    def create_selection(self, years=[2001, 2022], types=[], districts=[1], months=[1]):
+        temp_data_frame=None
+        if temp_data_frame is None:
+            temp_data_frame= self.data_frame.copy()
         if len(years) > 0:
+            val=years[0]
+            print('dtpe',type(val))
+            years = np.array(years, dtype=np.int64)
             temp_data_frame = temp_data_frame.select(
                 temp_data_frame.Year.isin(years), mode='and')
         if len(districts) > 0:

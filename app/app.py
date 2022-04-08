@@ -1,7 +1,9 @@
 # libaries
 from this import d
 from dash import Dash, html, dcc, Input, Output, dash_table
+
 from matplotlib.pyplot import figure
+
 # custom filters
 from filters.filters import FilterCreation
 # from filter_values.filter_values import LoadFilterValues
@@ -18,19 +20,22 @@ app = Dash(__name__)
 # intial data load
 # data_frame = pd.read_csv("./dataset/processed_crimes_sample_5000.csv")
 # read data frame using vaex
-data_frame = vx.from_csv("./dataset/processed_crimes_sample_5000.csv")
+df = vx.from_csv("./dataset/processed_crimes_sample_5000.csv")
 
-filters = DataFilter(data_frame)
+print(df.dtypes)
+
+filters = DataFilter(df)
 
 # safe update the data frame in the filters
-DataFilter.update_data_frame(data_frame)
+# DataFilter.update_data_frame(df)
 
+print('total intialised',filters.get_total_cases())
 
-df_slice_obj = DataFilter.create_selection(data_frame)
+df_slice_obj = filters.create_selection(df)
 
-figureCreator = CreateFigures(data_frame)
+figureCreator = CreateFigures(df)
 
-geo_plot = figureCreator.create_geoplot(data_frame)
+geo_plot = figureCreator.create_geoplot(df)
 
 
 # initilize ranking table
