@@ -1,4 +1,5 @@
 # libaries
+from inspect import formatannotationrelativeto
 from this import d
 from dash import Dash, html, dcc, Input, Output, dash_table
 
@@ -34,7 +35,7 @@ df_slice_obj = filters.create_selection()
 
 figureCreator = CreateFigures(df)
 
-geo_plot = figureCreator.create_geoplot(df)
+# geo_plot = figureCreator.create_geoplot(df)
 
 
 # initilize ranking table
@@ -60,19 +61,19 @@ app.layout = html.Div([
         className="row", children=[
             html.Div(className="Element", children=[
                 html.Label("Select Years"),
-                filters.range_selector("years")
+                figureCreator.range_selector("years",filters.get_years())
             ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px")),
             html.Div(className="Element", children=[
                 html.Label("Select Crime Type"),
-                filters.dropdown_filter("crime_type")
+                figureCreator.dropdown_filter("crime_type",filter_vals=filters)
             ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px")),
             html.Div(className="Element", id="filter_district", children=[
                 html.Label("Select Districts"),
-                filters.dropdown_filter("districts")
+                figureCreator.dropdown_filter("districts",filter_vals=filters)
             ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px")),
             html.Div(className="Element", children=[
                 html.Label("Select Month"),
-                filters.dropdown_filter("months")
+                figureCreator.dropdown_filter("months",filter_vals=filters)
             ], style=dict(width="25%", background="#F9F9F9", margin="10px", padding="15px"))
         ], style=dict(display='flex')
     ),
@@ -80,12 +81,12 @@ app.layout = html.Div([
     html.Div(className="Maps", children=[
         html.Div(className="MainMap", id="main_map", children=[
             dcc.Markdown(id="count_display", children=[]),
-            html.Div(children=[geo_plot.get_geoplot()], style=dict(
-                width="55.5%", height="360px", position="absolute"), id="pydeck_map")
+            # html.Div(children=[geo_plot.get_geoplot()], style=dict(
+            #     width="55.5%", height="360px", position="absolute"), id="pydeck_map")
         ], style=dict(width="60%", height="400px", background="#F9F9F9", margin="10px", padding="15px")),
         html.Div(className="Element", children=[
-            dcc.Graph(id='sunburst_plot',
-                      figure=figureCreator.create_sunburst())
+            # dcc.Graph(id='sunburst_plot',
+            #           figure=figureCreator.create_sunburst())
         ], style=dict(width="40%", height="400px", background="#F9F9F9", margin="10px", padding="15px"))
     ], style=dict(display='flex')),
     html.Br(),
@@ -145,8 +146,8 @@ def update_selection(years, types, districts, months):
     updated = filters.create_selection(years, types, districts, months)
 
     figureCreator.update_data_frame(updated)
-
-    return filters.get_total_cases()
+    changed_count = "**Total Cases: {}**".format(str(filters.get_total_cases()))
+    return [changed_count]
 
 
 def update_geoplot(years, types, districts, months):

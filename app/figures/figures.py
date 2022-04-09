@@ -18,8 +18,8 @@ class CreateFigures:
     def update_data_frame(self, data_frame):
         self.data_frame = data_frame
 
-    def create_sunburst(self, tp_df):
-        if tp_df is None:
+    def create_sunburst(self, tp_df=None):
+        if tp_df==None:
             tp_df = self.data_frame
         fig = px.sunburst(
             tp_df, path=['District_Name', 'Primary Type'], values='total_case')
@@ -30,11 +30,17 @@ class CreateFigures:
         )
         fig2.update_layout(margin=dict(t=10, l=0, r=0, b=10))
         return fig2
+    
+    def convert_to_pandas(self,df):
+        # convert to pandas dataframe
+        return vx.to_pandas(df)
 
     # function to create ranking table
-    def create_ranking(self, tp_df):
+    def create_ranking(self, tp_df=None):
         if tp_df is None:
             tp_df = self.data_frame
+        print(tp_df.head(5))
+        tp_df= self.convert_to_pandas(tp_df)
         return self.data_bars(tp_df, 'total_case')
 
     def data_bars(self, df, column):
@@ -76,7 +82,7 @@ class CreateFigures:
         return styles
 
     # year range slider
-    def range_selector(self, years, selector_type, count=0):
+    def range_selector(self, selector_type, years,count=0):
         range_vals = []
         min = 0
         max = 0

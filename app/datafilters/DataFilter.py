@@ -55,16 +55,16 @@ class DataFilter:
         selection = None
         if len(years) > 0:
             df = df[df.Year.isin(years)]
-            print(df.count())
+            print('year selection',df.count())
         if len(districts) > 0:
             df = df[df.District.isin(districts)]
-            print(df.count())
+            print('disctricts slection',df.count())
         if len(months) > 0:
             df = df[df.Month.isin(months)]
-            print(df.count())
+            print('months slection',df.count())
         if len(types) > 0:
             df = df[df["Primary Type"].isin(types)]
-            print(df.count())
+            print('types slection',df.count())
 
         self.update_data_frame(df)
         return df
