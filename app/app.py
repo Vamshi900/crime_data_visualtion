@@ -6,9 +6,10 @@ from matplotlib.pyplot import figure
 
 # custom filters
 # from filter_values.filter_values import LoadFilterValues
-from filter_values.vaex_filtes import DataFilter
+from datafilters.DataFilter import DataFilter
 # geo plots
 from figures.figures import CreateFigures
+
 import vaex as vx
 # figues import
 
@@ -27,7 +28,7 @@ filters = DataFilter(df)
 # safe update the data frame in the filters
 # DataFilter.update_data_frame(df)
 
-print('total intialised',filters.get_total_cases())
+print('total intialised', filters.get_total_cases())
 
 df_slice_obj = filters.create_selection()
 
@@ -83,7 +84,8 @@ app.layout = html.Div([
                 width="55.5%", height="360px", position="absolute"), id="pydeck_map")
         ], style=dict(width="60%", height="400px", background="#F9F9F9", margin="10px", padding="15px")),
         html.Div(className="Element", children=[
-            dcc.Graph(id='sunburst_plot', figure=figureCreator.create_sunburst())
+            dcc.Graph(id='sunburst_plot',
+                      figure=figureCreator.create_sunburst())
         ], style=dict(width="40%", height="400px", background="#F9F9F9", margin="10px", padding="15px"))
     ], style=dict(display='flex')),
     html.Br(),
@@ -121,8 +123,8 @@ app.layout = html.Div([
 
 @app.callback(
     [Output("count_display", "children"),
-    #  Output("pydeck_map", "children"),
-    #  Output("sunburst_plot", "figure"),
+     #  Output("pydeck_map", "children"),
+     #  Output("sunburst_plot", "figure"),
      #  Output("table1", "data"),
      #  Output("table1", "style_data_conditional")],
      ],
@@ -141,7 +143,7 @@ def update_selection(years, types, districts, months):
     if months is None:
         months = []
     updated = filters.create_selection(years, types, districts, months)
-    
+
     figureCreator.update_data_frame(updated)
 
     return filters.get_total_cases()
@@ -156,9 +158,11 @@ def update_geoplot(years, types, districts, months):
         districts = []
     if months is None:
         months = []
-    new_data_frame = DataFilter.create_selection(years, types, districts, months)
+    new_data_frame = DataFilter.create_selection(
+        years, types, districts, months)
     new_geo_obj = GeoPlot(new_data_frame)
     return new_geo_obj.get_geoplot()
+
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=5000, debug=True)
