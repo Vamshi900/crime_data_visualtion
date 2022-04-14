@@ -8,4 +8,5 @@ pyshp
 shapely
 pydeck
 dash_deck
+dash_bootstrap_components
 
