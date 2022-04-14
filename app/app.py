@@ -9,4 +9,4 @@ style_sheets = [dbc.themes.YETI]
 app = Dash(__name__, external_stylesheets=style_sheets, suppress_callback_exceptions=True)
 
 # specifying the port on which the app should run
-port = 5035
+port = 5037
