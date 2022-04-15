@@ -20,7 +20,10 @@ app = Dash(__name__)
 # intial data load
 # data_frame = pd.read_csv("./dataset/processed_crimes_sample_5000.csv")
 # read data frame using vaex
-df = vx.from_csv("./dataset/processed_crimes_sample_5000.csv")
+# df = vx.from_csv("./dataset/processed_full.csv")
+# df = vx.open("./dataset/h_d.hdf5")
+df = vx.open("./dataset/crime_hdf5/*.hdf5")
+print('intial load count: ', df.count())
 
 # print(df.dtypes)
 
@@ -34,6 +37,7 @@ print('total intialised', filters.get_total_cases())
 df_slice_obj = filters.create_selection()
 
 figureCreator = CreateFigures(df)
+
 
 # geo_plot = figureCreator.create_geoplot(df)
 
@@ -81,12 +85,14 @@ app.layout = html.Div([
     html.Div(className="Maps", children=[
         html.Div(className="MainMap", id="main_map", children=[
             dcc.Markdown(id="count_display", children=[]),
-            # html.Div(children=[geo_plot.get_geoplot()], style=dict(
-            #     width="55.5%", height="360px", position="absolute"), id="pydeck_map")
+            html.Div(children=[
+                dcc.Graph(id="geo_plot", figure='No Data')
+            ], style=dict(
+                width="55.5%", height="360px", position="absolute"), id="pydeck_map")
         ], style=dict(width="60%", height="400px", background="#F9F9F9", margin="10px", padding="15px")),
         html.Div(className="Element", children=[
-            # dcc.Graph(id='sunburst_plot',
-            #           figure=figureCreator.create_sunburst())
+            dcc.Graph(id='sunburst_plot',
+                      figure=figureCreator.create_sunburst(filters.sunburst_filter()))
         ], style=dict(width="40%", height="400px", background="#F9F9F9", margin="10px", padding="15px"))
     ], style=dict(display='flex')),
     html.Br(),
@@ -124,8 +130,8 @@ app.layout = html.Div([
 
 @app.callback(
     [Output("count_display", "children"),
-     #  Output("pydeck_map", "children"),
-     #  Output("sunburst_plot", "figure"),
+      Output("pydeck_map", "children"),
+      Output("sunburst_plot", "figure"),
      #  Output("table1", "data"),
      #  Output("table1", "style_data_conditional")],
      ],
@@ -143,26 +149,29 @@ def update_selection(years, types, districts, months):
         districts = []
     if months is None:
         months = []
+    print('selcted types', types)    
     updated = filters.create_selection(years, types, districts, months)
 
     figureCreator.update_data_frame(updated)
     changed_count = "**Total Cases: {}**".format(str(filters.get_total_cases()))
-    return [changed_count]
+    geo_data = filters.geo_plot_filter()
+    geo_map = figureCreator.create_geoplot(geo_data)
+    return (changed_count,geo_map,figureCreator.create_sunburst(filters.sunburst_filter()))
 
 
-def update_geoplot(years, types, districts, months):
-    if years is None:
-        years = []
-    if types is None:
-        types = []
-    if districts is None:
-        districts = []
-    if months is None:
-        months = []
-    new_data_frame = DataFilter.create_selection(
-        years, types, districts, months)
-    new_geo_obj = GeoPlot(new_data_frame)
-    return new_geo_obj.get_geoplot()
+# def update_geoplot(years, types, districts, months):
+#     if years is None:
+#         years = []
+#     if types is None:
+#         types = []
+#     if districts is None:
+#         districts = []
+#     if months is None:
+#         months = []
+#     new_data_frame = DataFilter.create_selection(
+#         years, types, districts, months)
+#     new_geo_obj = GeoPlot(new_data_frame)
+#     return new_geo_obj.get_geoplot()
 
 
 if __name__ == '__main__':
