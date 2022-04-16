@@ -21,7 +21,6 @@ nav = Navbar()
 temp_data_frame = filters.create_ranking_filter(data_frame)
 table_records_intitial, table_style_initial = figures.create_ranking_fig(temp_data_frame)
 
-sunburst_data_frame = filters.sunburst_filter(data_frame)
 
 # dashboard layout code
 body = html.Div([
@@ -48,12 +47,12 @@ body = html.Div([
 
     html.Div(className="Maps", children = [
         html.Div(className="MainMap", id="main_map", children = [
-            dcc.Markdown(id="count_display", children=[]),
-            html.Div(children= [figures.pydeck_elevation_fig(data_frame)], style=dict(width="46.5%", height="360px", position="absolute"), id="pydeck_map")
+            dcc.Markdown(id="count_display", children="initial"),
+            html.Div(children= [figures.pydeck_elevation_fig(filters.geo_plot_filter())], style=dict(width="46.5%", height="360px", position="absolute"), id="pydeck_map")
         ], style=dict(width="50%", height="400px",background="#F9F9F9",margin="10px",padding="15px")),
         html.Div(className="MainMap1", id="main_map_1", children = [
             html.Br(),
-            html.Div(children= [figures.pydeck_scatter_fig(data_frame)], style=dict(width="46.5%", height="360px", position="absolute"), id="pydeck_map_1")
+            html.Div(children= [figures.pydeck_scatter_fig(filters.geo_plot_filter())], style=dict(width="46.5%", height="360px", position="absolute"), id="pydeck_map_1")
         ], style=dict(width="50%", height="400px",background="#F9F9F9",margin="10px",padding="15px", paddingTop="30px")),
     ],style=dict(display='flex')),
     html.Br(),
@@ -61,21 +60,21 @@ body = html.Div([
     html.Br(),
     html.Div(className = "charts_table", children=[
         html.Div(className="Element", children = [
-            dcc.Graph(id='sunburst_plot', figure=figures.sunburst_fig(sunburst_data_frame))
+            dcc.Graph(id='sunburst_plot', figure=figures.sunburst_fig(filters.sunburst_filter(data_frame)))
         ], style=dict(width="40%", height="400px",background="#F9F9F9",margin="10px",padding="15px")),
-        html.Div(className="Element", children = [
-            html.Div(className="ranking_table", children=[
-                    dash_table.DataTable(id='table1', columns=[
-                            {'name': 'District', 'id': 'District_Name'},
-                            {'name': 'Primary Type', 'id': 'Primary Type'},
-                            {'name': 'Number of Cases', 'id': 'total_case'},
-                        ],
-                        data=table_records_intitial.to_dict('records'),
-                        style_data_conditional=table_style_initial,
-                        style_as_list_view=True,
-                    )
-                ])
-        ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px",overflowY="auto")),
+        # html.Div(className="Element", children = [
+        #     html.Div(className="ranking_table", children=[
+        #             dash_table.DataTable(id='table1', columns=[
+        #                     {'name': 'District', 'id': 'District_Name'},
+        #                     {'name': 'Primary Type', 'id': 'Primary Type'},
+        #                     {'name': 'Number of Cases', 'id': 'total_case'},
+        #                 ],
+        #                 data=table_records_intitial.to_dict('records'),
+        #                 style_data_conditional=table_style_initial,
+        #                 style_as_list_view=True,
+        #             )
+        #         ])
+        # ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px",overflowY="auto")),
     ], style=dict(display='flex')),
 
 ], style={'background':'#F9F9F9'})
@@ -86,13 +85,15 @@ body = html.Div([
      Output("pydeck_map_1", "children"),
      Output("sunburst_plot", "figure"),
      Output("table1", "data"),
-     Output("table1", "style_data_conditional")],
+     Output("table1", "style_data_conditional")
+     ],
     [Input("id_slider_years", "value"),
      Input("id_dropdown_crime_type", "value"),
-     Input("id_dropdown_districts", "value"),
+     Input("filter_district", "value"),
      Input("id_dropdown_months", "value")]
 )
 def filter_plots(years, types, districts, months):
+    print(' i am in filter_plots')
     if years is None:
         years = []
     if types is None:
@@ -101,14 +102,34 @@ def filter_plots(years, types, districts, months):
         districts = []
     if months is None:
         months = []
+    
+    # print old data frame count
+    print("old data frame count: ", filters.data_frame.count())
+    # filter data    
     new_data_frame = filters.create_selection(years, types, districts, months)
-    pydeck_data_frame = filters.pydeck_plot_filter(new_data_frame)
-    ranking_data_frame = filters.create_ranking_filter(new_data_frame)
-    table_data, table_style = figures.create_ranking_fig(ranking_data_frame)
+    
+    print('new_data_frame count', new_data_frame.count())
+
+    # count display
+    changed_count = "**Total Cases: {}**".format(str(new_data_frame.count()))
+
+    # pydeck maps data and figures
+    pydeck_data_frame = filters.geo_plot_filter(new_data_frame)
+    pydeck_fig = figures.pydeck_elevation_fig(pydeck_data_frame)
+    pydeck_fig_1 = figures.pydeck_scatter_fig(pydeck_data_frame)
+
+    # sunburst data and figures
     sunburst_data_frame = filters.sunburst_filter(new_data_frame)
-    changed_count = "**Total Cases: {}**".format(str(new_data_frame["ID"].count()))
-    return (changed_count, figures.pydeck_elevation_fig(pydeck_data_frame), figures.pydeck_scatter_fig(pydeck_data_frame), 
-            figures.sunburst_fig(sunburst_data_frame), table_data.to_dict("records"), table_style)
+    sunburst_fig = figures.sunburst_fig(sunburst_data_frame)
+    
+    # ranking table data and figures
+    ranking_data_frame = filters.create_ranking_filter(new_data_frame)
+    ranking_table_records, ranking_table_style = figures.create_ranking_fig(ranking_data_frame)
+     
+    
+    return [changed_count, pydeck_fig, pydeck_fig_1, sunburst_fig]
+    # return (changed_count, figures.pydeck_elevation_fig(pydeck_data_frame), figures.pydeck_scatter_fig(pydeck_data_frame), 
+    #         figures.sunburst_fig(sunburst_data_frame), table_data.to_dict("records"), table_style)
 
 def Dashboard():
     layout = html.Div([

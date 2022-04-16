@@ -13,4 +13,6 @@ app = Dash(__name__, external_stylesheets=style_sheets, suppress_callback_except
 # specifying the port on which the app should run
 port = 5059
 
-orig_data_frame = pd.read_csv("sample_data.csv") #vx.from_csv("sample_data.csv")
+# orig_data_frame = pd.read_csv("sample_data.csv")
+# orig_data_frame= vx.from_csv("./datasets/sample_data.csv")
+orig_data_frame= vx.open("./crime_hdf5/*.hdf5")

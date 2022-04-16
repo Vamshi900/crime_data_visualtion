@@ -4,17 +4,18 @@ from dash import dcc
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
+import numpy as np
 
 
 class CreateFigures:
     def __init__(self, data_frame):
         self.data_frame = data_frame
-        self.lat=41.769448846
-        self.lon=-87.594177051
-        self.zoom=10.1
+        self.lat = 41.769448846
+        self.lon = -87.594177051
+        self.zoom = 10.1
         self.mapbox_api_token = "pk.eyJ1IjoidmFtc2hpOTYiLCJhIjoiY2wwZnRwNG1uMHUyYjNqb2lhbGRjbTMydCJ9.BveaAINhSJscgd_FiC9Ihw"
-    
-    def range_selector_fig(self, selector_type, years=[2001,2022], count=0):
+
+    def range_selector_fig(self, selector_type, years=[2001, 2022], count=0):
         min = years[0]
         max = years[-1]
         create_slider = dcc.RangeSlider(
@@ -23,12 +24,12 @@ class CreateFigures:
             step=1,
             dots=False,
             marks=None,
-            value = [min, max],
-            tooltip = {'placement':'bottom', 'always_visible':True},
-            id = "id_slider_"+selector_type
+            value=[min, max],
+            tooltip={'placement': 'bottom', 'always_visible': True},
+            id="id_slider_"+selector_type
         )
         return create_slider
-    
+
     def dropdown_filter_fig(self, filter_type, filter_obj, isMulti=True):
         options = []
         vals = []
@@ -36,22 +37,26 @@ class CreateFigures:
         if filter_type == "crime_type":
             vals = filter_obj.get_crime_types()
             for val in vals:
-                options.append({"label":val.capitalize(), "value": val.capitalize()})
+                options.append({"label": val.capitalize(),
+                               "value": val.capitalize()})
             placeholder = "Select crime types..."
         elif filter_type == "crime_type_sens":
-            vals = ["CRIM SEXUAL ASSAULT","HOMICIDE","HUMAN TRAFFICKING","KIDNAPPING","SEX OFFENCE"]
+            vals = ["CRIM SEXUAL ASSAULT", "HOMICIDE",
+                    "HUMAN TRAFFICKING", "KIDNAPPING", "SEX OFFENCE"]
             for val in vals:
-                options.append({"label":val.capitalize(), "value": val.capitalize()})
+                options.append({"label": val.capitalize(),
+                               "value": val.capitalize()})
             placeholder = "Select crime types..."
         elif filter_type == "days_of_week":
             vals = filter_obj.get_days_of_week()
             for val in vals:
-                options.append({"label":val.capitalize(), "value": val.capitalize()})
+                options.append({"label": val.capitalize(),
+                               "value": val.capitalize()})
             placeholder = "Select days of week..."
         elif filter_type == "months":
             vals = filter_obj.get_months()
             for num, name in vals.items():
-                options.append({"label":name, "value":num})
+                options.append({"label": name, "value": num})
             placeholder = "Select months..."
         elif filter_type == "districts":
             vals = filter_obj.get_police_districts()
@@ -59,21 +64,21 @@ class CreateFigures:
                 options.append({"label": name, "value": num})
             placeholder = "Choose districts..."
         elif filter_type == "year_frame":
-            vals = ["2001-2005","2006-2010","2011-2015","2016-2020"]
+            vals = ["2001-2005", "2006-2010", "2011-2015", "2016-2020"]
             for val in vals:
                 options.append({"label": val, "value": val})
-            placeholder = "Choose Years..." 
+            placeholder = "Choose Years..."
         create_filter = dcc.Dropdown(
-            options = options,
-            multi = isMulti,
-            searchable = True,
-            placeholder = placeholder,
-            value = [],
-            id = "id_dropdown_"+filter_type
+            options=options,
+            multi=isMulti,
+            searchable=True,
+            placeholder=placeholder,
+            value=[],
+            id="id_dropdown_"+filter_type
         )
 
         return create_filter
-    
+
     def pydeck_elevation_fig(self, data_frame):
         map_plot = pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v10",
@@ -99,13 +104,14 @@ class CreateFigures:
                 ),
             ]
         )
-        tooltip={
+        tooltip = {
             'html': '<b>Total Cases:</b> {elevationValue}',
             'style': {
                 'color': 'white'
             }
         }
-        deck_component = dash_deck.DeckGL(map_plot.to_json(), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
+        deck_component = dash_deck.DeckGL(map_plot.to_json(
+        ), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
         return deck_component
 
     def pydeck_scatter_fig(self, data_frame):
@@ -137,7 +143,7 @@ class CreateFigures:
                 ),
             ]
         )
-        tooltip={
+        tooltip = {
             'html': """
             <style>
                 table {
@@ -191,14 +197,16 @@ class CreateFigures:
                 'color': 'white',
             }
         }
-        deck_component = dash_deck.DeckGL(map_plot.to_json(), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
+        deck_component = dash_deck.DeckGL(map_plot.to_json(
+        ), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
         return deck_component
-    
+
     def effective_pd_fig(self, data_frame_1, data_frame_2):
         fig = go.Figure()
+
         fig.add_trace(go.Bar(
-            y=data_frame_1["Primary Type"],
-            x=data_frame_1["Count"],
+            y=np.array(data_frame_1["Primary Type"].tolist()),
+            x=np.array(data_frame_1["Count"].tolist()),
             name='Arrested',
             orientation='h',
             marker=dict(
@@ -206,8 +214,8 @@ class CreateFigures:
             )
         ))
         fig.add_trace(go.Bar(
-            y=data_frame_2["Primary Type"],
-            x=data_frame_2["Count"],
+            y=np.array(data_frame_2["Primary Type"].tolist()),
+            x=np.array(data_frame_2["Count"].tolist()),
             name='Not Arrested',
             orientation='h',
             marker=dict(
@@ -215,176 +223,184 @@ class CreateFigures:
             )
         ))
         fig.update_layout(barmode='stack',
-                        height=600,
-                        yaxis=dict(
-                            title_text="Crime Type",
-                        ),
-                        xaxis=dict(
-                            title_text="Number of Criminal Offences",
-                        ),
-                        margin=dict(
-                            l=10,
-                            r=10,
-                            b=10,
-                            t=50,
-                            pad=4
-                        ),)
+                          height=600,
+                          yaxis=dict(
+                              title_text="Crime Type",
+                          ),
+                          xaxis=dict(
+                              title_text="Number of Criminal Offences",
+                          ),
+                          margin=dict(
+                              l=10,
+                              r=10,
+                              b=10,
+                              t=50,
+                              pad=4
+                          ),)
         return fig
 
     def holiday_crime_fig(self, data_frame, mean):
-        months = ["January", "February","March","April","May","June","July","August","September","October","November","December"]
+        months = ["January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"]
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=months, y=data_frame["Count"], name="Total Crimes", text = data_frame["Count"], textposition="top center",
-            mode="lines+markers+text", line = dict(color='royalblue', width=3)))
+        fig.add_trace(go.Scatter(x=months, y=np.array(data_frame["Count"].tolist()), name="Total Crimes", text=np.array(data_frame["Count"].tolist()), textposition="top center",
+                                 mode="lines+markers+text", line=dict(color='royalblue', width=3)))
         fig.update_traces(marker_size=10)
         fig.add_trace(go.Scatter(x=months, y=[mean for v in range(12)], name="Average Crimes",
-            line = dict(color='firebrick', width=1, dash="dash")))
+                                 line=dict(color='firebrick', width=1, dash="dash")))
         fig.update_layout(yaxis=dict(
-                      title_text="Number of Criminal Offences",
-                ),
-                xaxis=dict(
-                      title_text="Time of the Year",
-                ),
-                height=600,
-                margin=dict(
-                      l=10,
-                      r=10,
-                      b=10,
-                      t=50,
-                      pad=4
-                  ),)
-        return fig
-    
-    def weekday_crime_fig(self, data_frame, mean):
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=data_frame["Day"], 
-                         y=data_frame["District"],
-                         text=data_frame["Count"],
-                         mode="markers",
-                         marker=dict(
-                            sizemode='diameter',
-                            sizeref=mean/12,
-                            size=data_frame['Count'],
-                            color="red"
-                        )))
-        fig.update_layout(yaxis=dict(
-                      title_text="Districts",
-                ),
-                xaxis=dict(
-                      title_text="Day of week",
-                ),
-                height=600,
-                margin=dict(
-                      l=10,
-                      r=20,
-                      b=10,
-                      t=50,
-                      pad=4
-                  ),)
+            title_text="Number of Criminal Offences",
+        ),
+            xaxis=dict(
+            title_text="Time of the Year",
+        ),
+            height=600,
+            margin=dict(
+            l=10,
+            r=10,
+            b=10,
+            t=50,
+            pad=4
+        ),)
         return fig
 
-    def daytime_crime_fig(self,data_frame,mean):
+    def weekday_crime_fig(self, data_frame, mean):
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=data_frame["hour"], y=data_frame["Count"], name="Total Crimes", text = data_frame["Count"], textposition="top center",
-            mode="lines+markers+text", line = dict(color='royalblue', width=3)))
-        fig.update_traces(marker_size=10)
-        fig.add_trace(go.Scatter(x=data_frame["hour"], y=[mean for v in range(24)], name="Average Crimes",
-            line = dict(color='firebrick', width=1, dash="dash")))
+        fig.add_trace(go.Scatter(x=np.array(data_frame["Day"].tolist()),
+                                 y=np.array(
+                                     data_frame["District_Name"].tolist()),
+                                 text=np.array(data_frame["Count"].tolist()),
+                                 mode="markers",
+                                 marker=dict(
+            sizemode='diameter',
+            sizeref=mean/12,
+            size=np.array(data_frame["Count"].tolist()),
+            color="red"
+        )))
         fig.update_layout(yaxis=dict(
-                      title_text="Number of Criminal Offences",
-                ),
-                xaxis=dict(
-                      title_text="Time of the Day",
-                      tickmode="linear"
-                ),
-                height=600,
-                margin=dict(
-                      l=10,
-                      r=10,
-                      b=10,
-                      t=50,
-                      pad=4
-                  ),)
+            title_text="District_Name",
+        ),
+            xaxis=dict(
+            title_text="Day of week",
+        ),
+            height=600,
+            margin=dict(
+            l=10,
+            r=20,
+            b=10,
+            t=50,
+            pad=4
+        ),)
         return fig
-    
+
+    def daytime_crime_fig(self, data_frame, mean):
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(x=np.array(data_frame["Time"].tolist()), y=np.array(data_frame["Count"].tolist()), name="Total Crimes", text=np.array(data_frame["Count"].tolist()), textposition="top center",
+                                 mode="lines+markers+text", line=dict(color='royalblue', width=3)))
+        fig.update_traces(marker_size=10)
+        fig.add_trace(go.Scatter(x=np.array(data_frame["Time"].tolist()), y=[mean for v in range(24)], name="Average Crimes",
+                                 line=dict(color='firebrick', width=1, dash="dash")))
+        fig.update_layout(yaxis=dict(
+            title_text="Number of Criminal Offences",
+        ),
+            xaxis=dict(
+            title_text="Time of the Day",
+            tickmode="linear"
+        ),
+            height=600,
+            margin=dict(
+            l=10,
+            r=10,
+            b=10,
+            t=50,
+            pad=4
+        ),)
+        return fig
+
     def abuse_crime_fig(self, data_frame):
         fig = go.Figure()
         fig.add_trace(go.Bar(
-            y=data_frame["District"],
-            x=data_frame["Count"],
+            y=np.array(data_frame["District_Name"].tolist()),
+            x=np.array(data_frame["Count"].tolist()),
             name='Domestic',
             orientation='h',
             marker=dict(
                 color='#347FC2'
             )
         ))
-        fig.update_layout(barmode='stack', 
-                  height=600,
-                  yaxis=dict(
-                      title_text="District",
-                  ),
-                  xaxis=dict(
-                      title_text="Number of Domestic Offences",
-                  ),
-                  margin=dict(
-                      l=10,
-                      r=10,
-                      b=10,
-                      t=50,
-                      pad=4
-                  ),)
+        fig.update_layout(barmode='stack',
+                          height=600,
+                          yaxis=dict(
+                              title_text="District_Name",
+                          ),
+                          xaxis=dict(
+                              title_text="Number of Domestic Offences",
+                          ),
+                          margin=dict(
+                              l=10,
+                              r=10,
+                              b=10,
+                              t=50,
+                              pad=4
+                          ),)
         return fig
 
     def state_crime_fig(self, data_frame):
         fig = go.Figure()
-        fig.add_trace(go.Bar(x=data_frame["Year"], y=data_frame["Count"],opacity=.6, marker=dict(color='#BEBEBE'), width=[.2,.2,.2,.2,.2]))
-        fig.add_trace(go.Scatter(x=data_frame["Year"], y=data_frame["Count"],
-                    mode='markers+text', opacity=1, textposition='middle center', text=data_frame["Count"],
-                    textfont=dict(
-                        family="sans serif",
-                        size=12,
-                        color="white"
-                    ),
-                    marker=dict(size=[100,100,100,100,100], color='#0047AB')))
+        X = np.array(data_frame["Year"].tolist())
+        Y = np.array(data_frame["Count"].tolist())
+        fig.add_trace(go.Bar(x=X, y=Y, opacity=.6, marker=dict(
+            color='#BEBEBE'), width=[.2, .2, .2, .2, .2]))
+        fig.add_trace(go.Scatter(x=X, y=Y,
+                                 mode='markers+text', opacity=1, textposition='middle center', text=Y,
+                                 textfont=dict(
+                                     family="sans serif",
+                                     size=12,
+                                     color="white"
+                                 ),
+                                 marker=dict(size=[100, 100, 100, 100, 100], color='#0047AB')))
         fig.update_layout(showlegend=False,
-                    height=600,
-                    yaxis=dict(
-                        title_text="Number of Offences",
-                    ),
-                    xaxis=dict(
-                        title_text="Years",
-                    ),
-                    margin=dict(
-                        l=10,
-                        r=10,
-                        b=10,
-                        t=50,
-                        pad=4
-                    ),)
+                          height=600,
+                          yaxis=dict(
+                              title_text="Number of Offences",
+                          ),
+                          xaxis=dict(
+                              title_text="Years",
+                          ),
+                          margin=dict(
+                              l=10,
+                              r=10,
+                              b=10,
+                              t=50,
+                              pad=4
+                          ),)
         return fig
-    
+
     def sunburst_fig(self, data_frame):
-        fig = px.sunburst(data_frame, path=['labels', 'parents'], values='values')
-        fig1 =go.Figure(go.Sunburst(
-                labels=fig['data'][0]['labels'].tolist(),
-                parents=fig['data'][0]['parents'].tolist(),
-                ids=fig['data'][0]['ids'].tolist())
-                )
-        fig1.update_layout(margin = dict(t=10, l=0, r=0, b=10))
+        fig = px.sunburst(data_frame, path=[
+                          'labels', 'parents'], values='values')
+        fig1 = go.Figure(go.Sunburst(
+            labels=fig['data'][0]['labels'].tolist(),
+            parents=fig['data'][0]['parents'].tolist(),
+            ids=fig['data'][0]['ids'].tolist())
+        )
+        fig1.update_layout(margin=dict(t=10, l=0, r=0, b=10))
         return fig1
-    
+
     def convert_to_pandas(self, data_frame):
         return data_frame.to_pandas_df()
 
     def create_ranking_fig(self, data_frame):
         #data_frame = self.convert_to_pandas(data_frame)
         return data_frame, self.data_bars(data_frame, 'total_case')
-    
+
     def data_bars(self, data_frame, column):
         n_bins = 100
         bounds = [i * (1.0 / n_bins) for i in range(n_bins + 1)]
         ranges = [
-            ((data_frame[column].max() - data_frame[column].min()) * i) + data_frame[column].min()
+            ((data_frame[column].max() - data_frame[column].min())
+             * i) + data_frame[column].min()
             for i in bounds
         ]
         styles = []
@@ -396,7 +412,8 @@ class CreateFigures:
                 'if': {
                     'filter_query': (
                         '{{{column}}} >= {min_bound}' +
-                        (' && {{{column}}} < {max_bound}' if (i < len(bounds) - 1) else '')
+                        (' && {{{column}}} < {max_bound}' if (
+                            i < len(bounds) - 1) else '')
                     ).format(column=column, min_bound=min_bound, max_bound=max_bound),
                     'column_id': column
                 },
