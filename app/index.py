@@ -4,9 +4,9 @@ from dash.dependencies import Input, Output
 
 # loading application component/webpages
 from app import app, port
-from storyline import StoryLine
-from predictor import Predictor
-from dashboard import Dashboard
+from screens.storyline import StoryLine
+from screens.predictor import Predictor
+from screens.dashboard import Dashboard
 
 
 app.layout = html.Div([
