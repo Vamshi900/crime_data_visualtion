@@ -1,0 +1,127 @@
+# importing the requied modules
+from dash import dcc,html, Input, Output, dash_table
+import pandas as pd
+import dash_bootstrap_components as dbc
+
+# importing the components for the web application
+from app import app, port, orig_data_frame
+from datafilters.DataFilter import DataFilter
+from figures.Figures import CreateFigures
+from screens.navbar import Navbar
+
+data_frame = orig_data_frame
+
+filters = DataFilter(data_frame)
+
+figures = CreateFigures(data_frame)
+
+nav = Navbar()
+
+#initilize ranking table
+temp_data_frame = filters.create_ranking_filter(data_frame)
+table_records_intitial, table_style_initial = figures.create_ranking_fig(temp_data_frame)
+
+sunburst_data_frame = filters.sunburst_filter(data_frame)
+
+# dashboard layout code
+body = html.Div([
+    html.Div(
+        className = "row", children = [
+            html.Div(className="Element", children = [
+                html.Label("Select Years"),
+                figures.range_selector_fig("years")
+            ], style=dict(width="30%",background="#F9F9F9",marginLeft="40px",padding="15px")),
+            html.Div(className="Element", children = [
+                html.Label("Select Crime Type"),
+                figures.dropdown_filter_fig("crime_type",filters)
+            ], style=dict(width="20%",background="#F9F9F9",padding="15px")),
+            html.Div(className="Element", id="filter_district", children = [
+                html.Label("Select Districts"),
+                figures.dropdown_filter_fig("districts", filters)
+            ], style=dict(width="20%",background="#F9F9F9",padding="15px")),
+            html.Div(className="Element", children = [
+                html.Label("Select Month"),
+                figures.dropdown_filter_fig("months", filters)
+            ], style=dict(width="20%",background="#F9F9F9",padding="15px"))
+        ], style=dict(display='flex',)
+    ),
+
+    html.Div(className="Maps", children = [
+        html.Div(className="MainMap", id="main_map", children = [
+            dcc.Markdown(id="count_display", children=[]),
+            html.Div(children= [figures.pydeck_elevation_fig(data_frame)], style=dict(width="46.5%", height="360px", position="absolute"), id="pydeck_map")
+        ], style=dict(width="50%", height="400px",background="#F9F9F9",margin="10px",padding="15px")),
+        html.Div(className="MainMap1", id="main_map_1", children = [
+            html.Br(),
+            html.Div(children= [figures.pydeck_scatter_fig(data_frame)], style=dict(width="46.5%", height="360px", position="absolute"), id="pydeck_map_1")
+        ], style=dict(width="50%", height="400px",background="#F9F9F9",margin="10px",padding="15px", paddingTop="30px")),
+    ],style=dict(display='flex')),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Div(className = "charts_table", children=[
+        html.Div(className="Element", children = [
+            dcc.Graph(id='sunburst_plot', figure=figures.sunburst_fig(sunburst_data_frame))
+        ], style=dict(width="40%", height="400px",background="#F9F9F9",margin="10px",padding="15px")),
+        html.Div(className="Element", children = [
+            html.Div(className="ranking_table", children=[
+                    dash_table.DataTable(id='table1', columns=[
+                            {'name': 'District', 'id': 'District_Name'},
+                            {'name': 'Primary Type', 'id': 'Primary Type'},
+                            {'name': 'Number of Cases', 'id': 'total_case'},
+                        ],
+                        data=table_records_intitial.to_dict('records'),
+                        style_data_conditional=table_style_initial,
+                        style_as_list_view=True,
+                    )
+                ])
+        ], style=dict(width="60%", height="500px",background="#F9F9F9",margin="10px",padding="15px",overflowY="auto")),
+    ], style=dict(display='flex')),
+
+], style={'background':'#F9F9F9'})
+
+@app.callback(
+    [Output("count_display", "children"),
+     Output("pydeck_map", "children"),
+     Output("pydeck_map_1", "children"),
+     Output("sunburst_plot", "figure"),
+     Output("table1", "data"),
+     Output("table1", "style_data_conditional")],
+    [Input("id_slider_years", "value"),
+     Input("id_dropdown_crime_type", "value"),
+     Input("id_dropdown_districts", "value"),
+     Input("id_dropdown_months", "value")]
+)
+def filter_plots(years, types, districts, months):
+    if years is None:
+        years = []
+    if types is None:
+        types = []
+    if districts is None:
+        districts = []
+    if months is None:
+        months = []
+    new_data_frame = filters.create_selection(years, types, districts, months)
+    pydeck_data_frame = filters.pydeck_plot_filter(new_data_frame)
+    ranking_data_frame = filters.create_ranking_filter(new_data_frame)
+    table_data, table_style = figures.create_ranking_fig(ranking_data_frame)
+    sunburst_data_frame = filters.sunburst_filter(new_data_frame)
+    changed_count = "**Total Cases: {}**".format(str(new_data_frame["ID"].count()))
+    return (changed_count, figures.pydeck_elevation_fig(pydeck_data_frame), figures.pydeck_scatter_fig(pydeck_data_frame), 
+            figures.sunburst_fig(sunburst_data_frame), table_data.to_dict("records"), table_style)
+
+def Dashboard():
+    layout = html.Div([
+        nav,
+        body
+    ])
+    return layout
+
+
+app.layout = Dashboard()
+
+if __name__ == '__main__':
+    app.run_server("0.0.0.0",port=port,debug=False)
+
+
+
