@@ -1,4 +1,8 @@
+import imp
 import vaex as vx
+import pandas as pd
+import numpy as np
+
 
 class DataFilter:
     def __init__(self, data_frame):
@@ -50,22 +54,26 @@ class DataFilter:
 
     # primary filter to cut the data frame
     # always use the original data frame
-    def create_selection(self, years=[2001, 2002, 2003], types=[], districts=[], months=[]):
+    def create_selection(self, years=[2001, 2002, 2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022], types=[], districts=[], months=[]):
         df = self.original_data_frame.copy()
+        print('before filter df ', df.count())
         selection = None
-        if len(years) > 0:
-            df = df[df.Year.isin(years)]
-            print(df.count())
+        # if len(years) > 0:
+        #     df = df[df.Year.isin(years)]
+        #     print('year selection', df.count())
         if len(districts) > 0:
             df = df[df.District.isin(districts)]
-            print(df.count())
+            print('disctricts slection', df.count())
         if len(months) > 0:
             df = df[df.Month.isin(months)]
-            print(df.count())
+            print('months slection', df.count())
         if len(types) > 0:
+            # convert types to uppper case
+            types = [x.upper() for x in types]
             df = df[df["Primary Type"].isin(types)]
-            print(df.count())
-
+            print('types slection', df.count())
+        
+        print('after filter selection', df.count())
         self.update_data_frame(df)
         return df
 
@@ -78,7 +86,15 @@ class DataFilter:
         tp_df = tp_df.groupby([tp_df["District_Name"], tp_df["Primary Type"]], agg={
             'total_case': vx.agg.count('Primary Type')})
         tp_df = tp_df.sort(["District_Name", 'total_case'], ascending=False)
-        return tp_df
+        # print('sunburst filter ', tp_df.total_case.unique())
+
+        vals = np.array(tp_df.total_case.tolist())
+        labels = np.array(tp_df["District_Name"].tolist())
+        parents = np.array(tp_df['Primary Type'].tolist())
+        # print(len(labels), len(parents), 'labels, parents', len(vals))
+        new_df = pd.DataFrame(
+            {'labels': labels, 'parents': parents, 'values': vals})
+        return new_df
 
     def table_filter(self, data_frame=None):
         if data_frame is None:
@@ -89,4 +105,26 @@ class DataFilter:
         tp_df = tp_df.groupby([tp_df["District_Name"], tp_df["Primary Type"]], agg={
             'total_case': vx.agg.count('Primary Type')})
         tp_df = tp_df.sort(["District_Name", 'total_case'], ascending=False)
-        return tp_df
+
+        # vals = np.array(tp_df.total_case.tolist())
+        # labels = np.array(tp_df["District_Name"].tolist())
+        # parents = np.array(tp_df['Primary Type'].tolist())
+        # print(len(labels), len(parents), 'labels, parents', len(vals))
+        # new_df = pd.DataFrame(
+        #     {'labels': labels, 'parents': parents, 'values': vals})
+        # return new_df
+        # return tp_df
+    
+    # geo plot filter
+    def geo_plot_filter(self, data_frame=None):
+        if data_frame is None:
+            data_frame = self.data_frame
+        tp_df = data_frame.copy()
+        # print(tp_df.head(5))
+        tp_df = tp_df['Latitude', 'Longitude']
+        if tp_df.count() > 2000000:
+            tp_df = tp_df.sample(200000)
+        # tpf = tp_df.sample(n=2, random_state=42)
+        print('geo plot sampled filter count', tp_df.count())
+        df_pandas = tp_df.to_pandas_df(["Longitude", "Latitude"])
+        return df_pandas

@@ -1,10 +1,18 @@
+from cProfile import label
+import imp
 import plotly.express as px
 import plotly.graph_objects as go
 import vaex as vx
 from dash import dcc
 import pydeck as pdk
 import dash_deck
+import numpy as np
+import pandas as pd
 
+fig_layout_defaults = dict(
+    plot_bgcolor="#F9F9F9",
+    paper_bgcolor="#F9F9F9",
+)
 
 class CreateFigures:
     def __init__(self, data_frame):
@@ -18,23 +26,27 @@ class CreateFigures:
     def update_data_frame(self, data_frame):
         self.data_frame = data_frame
 
-    def create_sunburst(self, tp_df):
-        if tp_df is None:
-            tp_df = self.data_frame
+    def create_sunburst(self, df=None):
+        # if df == None:
+        #     df = self.data_frame
         fig = px.sunburst(
-            tp_df, path=['District_Name', 'Primary Type'], values='total_case')
-        fig2 = go.Figure(go.Sunburst(
-            labels=fig['data'][0]['labels'].tolist(),
-            parents=fig['data'][0]['parents'].tolist(),
-            ids=fig['data'][0]['ids'].tolist())
+            df, path=['labels', 'parents'], values='values',
+            color_continuous_scale=px.colors.sequential.Plasma,
+            color_continuous_midpoint=np.average(df['values']),
         )
-        fig2.update_layout(margin=dict(t=10, l=0, r=0, b=10))
-        return fig2
+        fig.update_layout(**fig_layout_defaults)
+        return fig
+          
+    def convert_to_pandas(self, df):
+        # convert to pandas dataframe
+        return df.to_pandas_df(df)
 
     # function to create ranking table
-    def create_ranking(self, tp_df):
+    def create_ranking(self, tp_df=None):
         if tp_df is None:
             tp_df = self.data_frame
+        print(tp_df.head(5))
+        tp_df = self.convert_to_pandas(tp_df)
         return self.data_bars(tp_df, 'total_case')
 
     def data_bars(self, df, column):
@@ -76,7 +88,7 @@ class CreateFigures:
         return styles
 
     # year range slider
-    def range_selector(self, years, selector_type, count=0):
+    def range_selector(self, selector_type, years, count=0):
         range_vals = []
         min = 0
         max = 0
@@ -148,8 +160,12 @@ class CreateFigures:
     # function to create the pydeck map
     def create_geoplot(self, data_frame):
         if data_frame is None:
-            data_frame = self.data_frame
-
+            return 'No data'
+            # data_frame = self.data_frame
+        # data_frame = data_frame.copy()  
+        # df_copy = data_frame.copy()
+       
+        # data_frame = data_frame.to_pandas_df(data_frame)
         map_plot = pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v10",
             initial_view_state={
@@ -174,13 +190,13 @@ class CreateFigures:
                 ),
             ]
         )
-        tooltip = {
-            'html': '<b>Total Cases:</b> {elevationValue}',
-            'style': {
-                'color': 'white'
-            }
-        }
+        # tooltip = {
+        #     'html': '<b>Total Cases:</b> {elevationValue}',
+        #     'style': {
+        #         'color': 'white'
+            # }
+        # }
         deck_component = dash_deck.DeckGL(map_plot.to_json(
-        ), id="deck-gl", tooltip=tooltip, mapboxKey=self.mapbox_api_token)
+        ), id="deck-gl", mapboxKey=self.mapbox_api_token)
 
         return deck_component
