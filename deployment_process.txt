@@ -1,0 +1,37 @@
+# install git 
+
+sudo yum update -y
+sudo yum install git -y
+
+# install docker
+
+sudo yum update
+
+sudo yum install docker
+
+
+#Need docker-compose too? Try:
+#wget https://github.com/docker/compose/releases/latest/download/#docker-compose-$(uname -s)-$(uname -m) 
+#sudo mv docker-compose-$(uname -s)-$(uname -m) /usr/local/bin/docker-compose
+#sudo chmod -v +x /usr/local/bin/docker-compose
+
+
+#Enable docker service at AMI boot time:
+
+sudo systemctl enable docker.service
+
+
+#Start the Docker service:
+
+sudo systemctl start docker.service
+
+#
+sudo systemctl status docker.service
+
+# s3 sync
+
+create a i am role with s3 full access 
+assign it to the machine
+
+
+aws s3 cp s3://diva-chicago-crime/processed_full.csv processed_full.csv
