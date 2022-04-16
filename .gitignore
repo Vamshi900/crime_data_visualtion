@@ -5,6 +5,8 @@ __pycache__/
 
 *data.csv
 *.csv
+*.hdf5
+*.tar.gz
 
 # C extensions
 *.so
