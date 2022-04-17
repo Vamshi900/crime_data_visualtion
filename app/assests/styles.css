@@ -69,7 +69,14 @@
     height: calc(100% - 30px);
     width: calc(100% - 30px);
   }
-  
+
+  #elevation_deck{
+    width: calc(100% - 30px);
+    height: 450px!important;
+    position: relative;
+    flex:5;
+
+  }
   #countGraphContainer {
     flex: 5;
     position: relative;
