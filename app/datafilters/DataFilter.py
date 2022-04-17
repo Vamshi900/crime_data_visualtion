@@ -67,14 +67,14 @@ class DataFilter:
         return self.data_frame.count()
 
     # primary data selection filter
-    def create_selection(self, years=[2011, 2022], types=[], districts=[], months=[]):
+    def create_selection(self, years=[2001, 2022], types=[], districts=[], months=[]):
         df = self.original_data_frame.copy()
         print('before filter df ', df.count())
         selection = None
         if len(years) > 0:
             # array of years given start and end
             filter_years = [ yr for yr in range(years[0], years[1]+1)]
-            print(filter_years)
+            # print(filter_years)
             df = df[df["Year"].isin(filter_years)]
         #     print('year selection', df.count())
         if len(districts) > 0:
@@ -104,7 +104,7 @@ class DataFilter:
 
         # temp_data_frame["District_Name"] = temp_data_frame["District"].map(self.get_police_districts())
         temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"], temp_data_frame["Primary Type"]],
-                                                  agg={'total_case': vx.agg.count('Primary Type')})
+                                                  agg={'total_case': vx.agg.count('Primary Type')},sort=True)
         temp_data_frame = temp_data_frame.sort(
             ["District_Name", "total_case"], ascending=False)
 
@@ -123,12 +123,12 @@ class DataFilter:
             data_frame = self.data_frame
         tp_df = data_frame.copy()
         # print(tp_df.head(5))
-        tp_df = tp_df['Latitude', 'Longitude']
+        # tp_df = tp_df['Latitude', 'Longitude']
         if tp_df.count() > 2000000:
             tp_df = tp_df.sample(200000)
         # tpf = tp_df.sample(n=2, random_state=42)
         # print('geo plot sampled filter count', tp_df.count())
-        df_pandas = tp_df.to_pandas_df(["Longitude", "Latitude"])
+        df_pandas = tp_df.to_pandas_df()
         return df_pandas
 
     # ranking table filter
@@ -137,7 +137,7 @@ class DataFilter:
             "District", "Primary Type", "District_Name"]]
 
         temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"], temp_data_frame["Primary Type"]], agg={
-            'total_case': vx.agg.count('Primary Type')})
+            'total_case': vx.agg.count('Primary Type')},sort=True)
         temp_data_frame = temp_data_frame.sort(
             ["District_Name", 'total_case'], ascending=False)
 
@@ -157,9 +157,9 @@ class DataFilter:
         td2 = temp_data_frame[temp_data_frame["Arrest"] == False]
 
         td1 = td1.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"]], agg={
-            'Count': vx.agg.count('Primary Type')})
+            'Count': vx.agg.count('Primary Type')},sort=True)
         td2 = td2.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"]], agg={
-            'Count': vx.agg.count('Primary Type')})
+            'Count': vx.agg.count('Primary Type')},sort=True)
 
         return td1, td2
 
@@ -170,7 +170,7 @@ class DataFilter:
         temp_data_frame = data_frame.copy()
         temp_data_frame = data_frame[["Primary Type", "Month"]]
         temp_data_frame = temp_data_frame.groupby([temp_data_frame["Month"]], agg={
-            'Count': vx.agg.count('Month')})
+            'Count': vx.agg.count('Month')},sort=True)
 
         mean = temp_data_frame.mean("Count").tolist()
         return temp_data_frame, mean
@@ -184,10 +184,10 @@ class DataFilter:
             "Primary Type", "District", "Day", "District_Name"]]
 
         temp_data_frame = temp_data_frame.groupby([temp_data_frame["Day"], temp_data_frame["District_Name"]], agg={
-            'Count': vx.agg.count('Day')})
+            'Count': vx.agg.count('Day')},sort=True)
 
-        temp_data_frame = temp_data_frame.sort(
-            ["Day"], ascending=False)
+        # temp_data_frame = temp_data_frame.sort(
+        #     ["Day"], ascending=False)
 
         mean = temp_data_frame.mean("Count").tolist()
 
@@ -201,7 +201,7 @@ class DataFilter:
 
         temp_data_frame["Time"] = temp_data_frame["Time"].apply(lambda x: x[:2])
         temp_data_frame = temp_data_frame.groupby([temp_data_frame["Time"]], agg={
-        'Count': vx.agg.count('Time')})
+        'Count': vx.agg.count('Time')},sort=True)
         mean = temp_data_frame.mean("Count").tolist()
         return temp_data_frame, mean
 
@@ -215,7 +215,7 @@ class DataFilter:
         temp_data_frame = temp_data_frame[temp_data_frame["Domestic"] == True]
 
         temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"],temp_data_frame["Domestic"]], agg={
-        'Count': vx.agg.count('Domestic')})
+        'Count': vx.agg.count('Domestic')},sort=True)
 
         return temp_data_frame
 
