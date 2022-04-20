@@ -1,0 +1,40 @@
+Good vizualization Had interactive and linked plots
+Features were implemeted on the project 
+Filters  and building like structures helps the users to analyze whatever data they want   
+Good Interactivity, good color schemes and UI, visualization does not seem complex though.
+
+ Layout is minimalist, simple to use, map 3D perspective seems awkward for some users.
+Is it possible to implement a way for user to investigate individual incidents or can the user only see aggregated statistics?  
+Interactivity in the graphs are quite visible. Future work which they mentioned looks quite interesting
+ '+:
+1. good coordination of plots in visualization
+-:
+1. Look forward to the prediction part and tell a coherent story of the data
+Minors:
+1. the sun burst plot: use the area to encode #cases 
+User can benefit more if the graph has more interactive tools
+The plots are very interactive and clean. Users can easily use plots to attain information about crime rates in Chicago
+The interactive maps for the different locations looked amazing
+Criminalytics - great name, good interactivity, 3D visualization for map
+The aim of each visualization is clear. The goal of the project is clear and interesting. The 3D visualization in first graph is very good.
+Really good visualization, and good use of dataset, as they have included all sort of options to select.
+Good project
+Looking forward to the updates.
+Good UI and thoughts behind the graphs but the graphs looked very crowded. 
+It was pleasing to look at. The map for locations was pretty.
+ Group 4 - Crime Trend Analysis
+Visualization on the map is a nice touch. 
+It doesn't look like the plot on the right has enough room to display each type of crime per district...there may be a better way to display that.
+It would be cool if the zoomed in display of crime types showed their proportionally by amount of crimes instead of equally split into 5 sections.
+I would be interested to hear about the prediction tab that was on the app. 
+Chicago, S3, Sunburst chart
+A good selection of views with filters that are interconnected with each other.
+ Currently restricted to the city of Chicago. Can be further explored for different states.
+Interactivity is good. Filters for particular areas in Chicago can be incorporated for detailed analysis of a particular area. 
+ Good use of plotting the crime rate as heights on the maps. That allows good visualisation of the crime rate right on the map to give an idea of high crime areas and neighbourhoods.
+Good idea to show just top 5 crime types when visualising the number of crimes. 
+Is there an alternative to the sunburst chart since it seems like most of the splits end at the same set of crimes. 
+Interface seems very user friendly. Visualizations with multiple parameters can look a little cluttered, especially when zoomed out. Information on modes of processing, target users etc. not presented.
+Amazing use of charts, beautiful interface and there is a good amount of multi-level interactivity. Could be the perfect crime visualization app, if the app could be used for statewide crime analysis,
+This is an interesting idea and it is great that you are limiting it to just one dataset (Chicago). The dropdowns look great for breaking down between different types of crimes and other fields. I'm finding the mapbox map a little bit difficult to visualize in relation to   the streetnames and location (since they overlap a lot) within Chicago. Your idea for the user to set up the type of chart sounds really good and brings this project to the next level of interactivity.
+Very nice presentation. The plots were highly interactive and informative.
