@@ -1,4 +1,28 @@
 # Criminalytics 
+We intend to explore chicago crime data to find intresting insights in the data set . 
+We have chosen this datasets not only beacause of it's popularity but the daily updates it has . 
+
+## **Applicaiton Architecture. :
+**
+![arch](https://user-images.githubusercontent.com/18380025/164557384-05507c76-39e5-4939-8908-78bc3a07368c.jpeg)
+
+## Tech stack :
+
+**Infra** :
+aws s3 : data storage 
+aws lambda : data preprocessor and convert to native hdf5 format for faster indexing and stores back in s3
+aws ec2 (4-core 8-Gb): Bare machine for application deployment
+
+**Programming** :
+Python + Dash + Flask + Plotly
+
+# **Screenshots** 
+![Sample_application](https://user-images.githubusercontent.com/18380025/164559068-1de8811a-faa5-4ec9-a478-81fcae2f6454.gif)
+
+
+
+
+
 
 # Prerequisites
 
