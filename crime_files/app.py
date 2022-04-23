@@ -7,13 +7,15 @@ import dash_bootstrap_components as dbc
 # importing helper components
 from datafilters.DataFilter import DataFilter
 from figures.Figures import CreateFigures
+from figures.StatFigures import CreateStatFigures
 
-data_frame = vx.open("dataset/cleaned_2010_map2.hdf5")
-
+data_frame = vx.open("dataset/cleaned_2006.hdf5")
 
 filters = DataFilter(data_frame)
 
 figures = CreateFigures(data_frame)
+
+stat_figures = CreateStatFigures(data_frame)
 
 # Create controls
 # year range slider
@@ -47,7 +49,7 @@ story_buttons = html.Div([
     dbc.Button("Careful on Weekends!!", id="btn-str-5", n_clicks=0, color="secondary", className="me-1 five columns",),
     dbc.Button("Say to no Domestic Abuse...", id="btn-str-6", n_clicks=0, color="secondary", className="me-1 five columns",),
     html.Br()
-], className="row flex-display", style={"width": "600px"})
+], className="row flex-display", style={"width": "560px"})
 
 effective_pd_block = html.Div([
     html.Div(
@@ -64,12 +66,12 @@ effective_pd_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_1", filters, False, "January")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex',width="1370px")
     ),
     html.Div(
         className = "EffectivePD", children = [
-            dcc.Graph(id="effective_pd_1", figure={}, style=dict(width="1200px"))
-        ], style=dict(display='flex',)
+            dcc.Graph(id="effective_pd_1", figure={}, style=dict(width="1350px"))
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Br(),
     html.Div(
@@ -86,11 +88,11 @@ effective_pd_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_2", filters, False, "May")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "EffectivePD", children = [
-            dcc.Graph(id="effective_pd_2", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="effective_pd_2", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     )
 ])
@@ -110,11 +112,11 @@ holiday_crime_block = html.Div([
                 html.Label("Select Districts"),
                 figures.dropdown_filter_fig("districts_1", filters, False, "Central")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "HolidayCrime", children = [
-            dcc.Graph(id="holiday_crime_1", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="holiday_crime_1", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     ),
     html.Br(),
@@ -132,11 +134,11 @@ holiday_crime_block = html.Div([
                 html.Label("Select Districts"),
                 figures.dropdown_filter_fig("districts_2", filters, False, "Central")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "HolidayCrime", children = [
-            dcc.Graph(id="holiday_crime_2", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="holiday_crime_2", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     )
 ])
@@ -156,11 +158,11 @@ weekday_crime_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_1", filters, False, "January")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "CrimeDay", children = [
-            dcc.Graph(id="weekday_crime_1", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="weekday_crime_1", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     ),
     html.Br(),
@@ -178,11 +180,11 @@ weekday_crime_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_2", filters, False, "January")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "CrimeDay", children = [
-            dcc.Graph(id="weekday_crime_2", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="weekday_crime_2", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     )
 ])
@@ -206,11 +208,11 @@ daytime_crime_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_1", filters, False, "January")
             ], style=dict(width="20%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "CrimeDaytime", children = [
-            dcc.Graph(id="daytime_crime_1", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="daytime_crime_1", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     ),
     html.Br(),
@@ -232,11 +234,11 @@ daytime_crime_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_2", filters, False, "January")
             ], style=dict(width="20%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "CrimeDaytime", children = [
-            dcc.Graph(id="daytime_crime_2", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="daytime_crime_2", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     )
 ])
@@ -252,11 +254,11 @@ abuse_crime_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_1", filters, False, "January")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "CrimeAbuse", children = [
-            dcc.Graph(id="abuse_crime_1", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="abuse_crime_1", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     ),
     html.Br(),
@@ -270,11 +272,11 @@ abuse_crime_block = html.Div([
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig("months_2", filters,False,"May")
             ], style=dict(width="25%",padding="15px"))
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "CrimeAbuse", children = [
-            dcc.Graph(id="abuse_crime_2", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="abuse_crime_2", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',)
     )
 ])
@@ -286,11 +288,11 @@ state_crime_block = html.Div([
                 html.Label("Select Years"),
                 figures.dropdown_filter_fig("year_frame",filters,False)
             ], style=dict(width="25%",padding="15px")),
-        ], style=dict(display='flex',)
+        ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className = "WhereWe", children = [
-            dcc.Graph(id="state_crime", figure={}, style=dict(width="1200px"))
+            dcc.Graph(id="state_crime", figure={}, style=dict(width="1350px"))
         ], style=dict(display='flex',) 
     )
 ])
@@ -320,8 +322,8 @@ dashboard_layout = html.Div(
                                 style={
                                     "height": "60px",
                                     "width": "auto",
-                                    "margin-bottom": "-25px",
-                                    "margin-top": "-10px",
+                                    "margin-bottom": "-15px",
+                                    "margin-left": "-25px",
                                 },
                             )
                         ],
@@ -331,7 +333,7 @@ dashboard_layout = html.Div(
                         [
                             html.H3(
                                 "Criminalytics: Crime Data Insights",
-                                style={"margin-bottom": "0px", "margin-top": "0px"},
+                                style={"margin-bottom": "0px", "margin-top": "5px", "margin-left": "-230px"},
                             )
                         ],
                         className="nine columns",
@@ -344,10 +346,12 @@ dashboard_layout = html.Div(
                     [
                         dbc.Button("Dashboard", n_clicks=0, id="layout_btn_1"),
                         dbc.Button("StoryLine", n_clicks=0, id="layout_btn_2"),
-                        dbc.Button("Predictor", n_clicks=0, id="layout_btn_3"),
+                        dbc.Button("Insights", n_clicks=0, id="layout_btn_3"),
+                        dbc.Button("Predictor", n_clicks=0, id="layout_btn_4"),
                     ],
                     className="two-third column",
                     id="button_layout_div",
+                    style={"padding-top":"5px"}
                 ),
             ],
             id="header",
@@ -492,7 +496,7 @@ story_line_layout=html.Div(children=[
                                     "height": "60px",
                                     "width": "auto",
                                     "margin-bottom": "-25px",
-                                    "margin-top": "-10px",
+                                    "margin-left": "-25px",
                                 },
                             )
                         ],
@@ -502,7 +506,7 @@ story_line_layout=html.Div(children=[
                         [
                             html.H3(
                                 "Criminalytics: Crime Data Insights",
-                                style={"margin-bottom": "0px", "margin-top": "0px"},
+                                style={"margin-bottom": "0px", "margin-top": "5px","margin-left": "-230px"},
                             )
                         ],
                         className="nine columns",
@@ -515,10 +519,12 @@ story_line_layout=html.Div(children=[
                 [
                     dbc.Button("Dashboard", n_clicks=0, id="layout_btn_1"),
                     dbc.Button("StoryLine", n_clicks=0, id="layout_btn_2"),
-                    dbc.Button("Predictor", n_clicks=0, id="layout_btn_3"),
+                    dbc.Button("Insights", n_clicks=0, id="layout_btn_3"),
+                    dbc.Button("Predictor", n_clicks=0, id="layout_btn_4"),
                 ],
                 className="two-third column",
                 id="button_layout_div",
+                style={"padding-top":"5px"}
             ),
         ],
         id="header",
@@ -528,6 +534,140 @@ story_line_layout=html.Div(children=[
     html.Br(),
     story_buttons,
     html.Div(id='conatiner_charts', children=[state_crime_block])
+])
+
+# insights layout
+insights_layout=html.Div(children=[
+    dcc.Store(id="aggregate_data"),
+    html.Div(id="output-clientside"),
+    html.Div(
+        [
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.Img(
+                                src=app.get_asset_url(
+                                    "detective_logo.png"),
+                                id="plotly-image2",
+                                style={
+                                    "height": "60px",
+                                    "width": "auto",
+                                    "margin-bottom": "-25px",
+                                    "margin-left": "-25px",
+                                },
+                            )
+                        ],
+                        className="three columns",
+                    ),
+                    html.Div(
+                        [
+                            html.H3(
+                                "Criminalytics: Crime Data Insights",
+                                style={"margin-bottom": "0px", "margin-top": "5px","margin-left": "-230px"},
+                            )
+                        ],
+                        className="nine columns",
+                    ),
+                ],
+                className="one-thirds column",
+                id="title",
+            ),
+            html.Div(
+                [
+                    dbc.Button("Dashboard", n_clicks=0, id="layout_btn_1"),
+                    dbc.Button("StoryLine", n_clicks=0, id="layout_btn_2"),
+                    dbc.Button("Insights", n_clicks=0, id="layout_btn_3"),
+                    dbc.Button("Predictor", n_clicks=0, id="layout_btn_4"),
+                ],
+                className="two-third column",
+                id="button_layout_div",
+                style={"padding-top":"5px"}
+            ),
+        ],
+        id="header",
+        className="row flex-display",
+        style={"margin-bottom": "5px"},
+    ),
+    html.Br(),
+    html.H1("Key Data Insigts"),
+    html.Br(),
+    html.Div(
+        [
+            html.Div(
+                [
+                    dcc.Graph(id='chart_1', figure=stat_figures.chart_1()),
+                ],
+                id="div_chart_1",
+                className="pretty_container six columns",
+            ),
+            html.Div(
+                [
+                    dcc.Graph(id='chart_2', figure=stat_figures.chart_2()),
+                ],
+                id="div_chart_2",
+                className="pretty_container six columns",
+            ),
+        ],
+        className="row flex-display",
+    ),
+    html.Div(
+        [
+            html.Div(
+                [
+                    dcc.Graph(id='chart_3', figure=stat_figures.chart_3()),
+                ],
+                id="div_chart_3",
+                className="pretty_container six columns",
+            ),
+            html.Div(
+                [
+                    dcc.Graph(id='chart_4', figure=stat_figures.chart_4()),
+                ],
+                id="div_chart_4",
+                className="pretty_container six columns",
+            ),
+        ],
+        className="row flex-display",
+    ),
+    html.Div(
+        [
+            html.Div(
+                [
+                    dcc.Graph(id='chart_5', figure=stat_figures.chart_5()),
+                ],
+                id="div_chart_5",
+                className="pretty_container six columns",
+            ),
+            html.Div(
+                [
+                    dcc.Graph(id='chart_6', figure=stat_figures.chart_6()),
+                ],
+                id="div_chart_6",
+                className="pretty_container six columns",
+            ),
+        ],
+        className="row flex-display",
+    ),
+    html.Div(
+        [
+            html.Div(
+                [
+                    dcc.Graph(id='chart_7', figure=stat_figures.chart_7()),
+                ],
+                id="div_chart_7",
+                className="pretty_container six columns",
+            ),
+            html.Div(
+                [
+                    dcc.Graph(id='chart_8', figure=stat_figures.chart_8()),
+                ],
+                id="div_chart_8",
+                className="pretty_container six columns",
+            ),
+        ],
+        className="row flex-display",
+    ),
 ])
 
 # predictor layout
@@ -548,7 +688,7 @@ predictor_layout=html.Div(children=[
                                     "height": "60px",
                                     "width": "auto",
                                     "margin-bottom": "-25px",
-                                    "margin-top": "-10px",
+                                    "margin-left": "-25px",
                                 },
                             )
                         ],
@@ -558,7 +698,7 @@ predictor_layout=html.Div(children=[
                         [
                             html.H3(
                                 "Criminalytics: Crime Data Insights",
-                                style={"margin-bottom": "0px", "margin-top": "0px"},
+                                style={"margin-bottom": "0px", "margin-top": "5px","margin-left": "-230px"},
                             )
                         ],
                         className="nine columns",
@@ -571,10 +711,12 @@ predictor_layout=html.Div(children=[
                 [
                     dbc.Button("Dashboard", n_clicks=0, id="layout_btn_1"),
                     dbc.Button("StoryLine", n_clicks=0, id="layout_btn_2"),
-                    dbc.Button("Predictor", n_clicks=0, id="layout_btn_3"),
+                    dbc.Button("Insights", n_clicks=0, id="layout_btn_3"),
+                    dbc.Button("Predictor", n_clicks=0, id="layout_btn_4"),
                 ],
                 className="two-third column",
                 id="button_layout_div",
+                style={"padding-top":"5px"}
             ),
         ],
         id="header",
@@ -582,7 +724,12 @@ predictor_layout=html.Div(children=[
         style={"margin-bottom": "5px"},
     ),
     html.Br(),
-    html.H1("Future Crime Predictions")
+    html.H1("Future Crime Predictions"),
+    html.Br(),
+    html.Div(id='predictor_charts', children=[
+        dcc.Graph(id='predictor_graph_1', figure=stat_figures.plot_daily_prediction()),
+        dcc.Graph(id='predictor_graph_2', figure=stat_figures.plot_monthly_prediction()),
+    ], className="pretty_container eleven columns"),
 ]
 )
 
@@ -594,9 +741,10 @@ app.layout = html.Div(children=[dashboard_layout], id="app_container")
     [Output("app_container", "children"),],
     [Input('layout_btn_1','n_clicks'),
     Input('layout_btn_2','n_clicks'),
-    Input('layout_btn_3','n_clicks')]
+    Input('layout_btn_3','n_clicks'),
+    Input('layout_btn_4','n_clicks')]
 )
-def layout_change(btn1,btn2,btn3):
+def layout_change(btn1,btn2,btn3,btn4):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     layout_mode = dashboard_layout
     if changed_id == "layout_btn_1.n_clicks":
@@ -604,6 +752,8 @@ def layout_change(btn1,btn2,btn3):
     elif changed_id == "layout_btn_2.n_clicks":
         layout_mode = story_line_layout
     elif changed_id == "layout_btn_3.n_clicks":
+        layout_mode = insights_layout
+    elif changed_id == "layout_btn_4.n_clicks":
         layout_mode = predictor_layout
     return (layout_mode,)
 

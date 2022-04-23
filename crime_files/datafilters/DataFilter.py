@@ -80,7 +80,7 @@ class DataFilter:
         return percentage
 
     # primary data selection filter
-    def create_selection(self, years=[2001, 2022], types=[], districts=[], months=[]):
+    def create_selection(self, years=[2006 , 2022], types=[], districts=[], months=[]):
         df = self.original_data_frame.copy()
         selection = None
         if len(years) > 0:
@@ -128,8 +128,8 @@ class DataFilter:
             data_frame = self.data_frame
         tp_df = data_frame.copy()
         # tp_df = tp_df['Latitude', 'Longitude']
-        if tp_df.count() > 2000000:
-            tp_df = tp_df.sample(200000)
+        if tp_df.count() > 20000:
+            tp_df = tp_df.sample(20000)
         # tpf = tp_df.sample(n=2, random_state=42)
         df_pandas = tp_df.to_pandas_df()
         return df_pandas
@@ -152,14 +152,14 @@ class DataFilter:
             data_frame = self.data_frame
         temp_data_frame = data_frame.copy()
 
-        temp_data_frame = data_frame[["Primary Type", "Arrest"]]
+        temp_data_frame = data_frame[["Primary Type", "Arrest", "District_Name"]]
 
         td1 = temp_data_frame[temp_data_frame["Arrest"] == 'Yes']
         td2 = temp_data_frame[temp_data_frame["Arrest"] == 'No']
 
-        td1 = td1.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"]], agg={
+        td1 = td1.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Primary Type')}, sort=True)
-        td2 = td2.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"]], agg={
+        td2 = td2.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Primary Type')}, sort=True)
 
         return td1, td2

@@ -14,10 +14,10 @@ class CreateFigures:
         self.lat = 41.769448846
         self.lon = -87.594177051
         self.zoom = 10.1
-        #self.mapbox_api_token = "pk.eyJ1IjoidmFtc2hpOTYiLCJhIjoiY2wwZnRwNG1uMHUyYjNqb2lhbGRjbTMydCJ9.BveaAINhSJscgd_FiC9Ihw"
-        self.mapbox_api_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
+        self.mapbox_api_token = "pk.eyJ1IjoidmFtc2hpOTYiLCJhIjoiY2wwZnRwNG1uMHUyYjNqb2lhbGRjbTMydCJ9.BveaAINhSJscgd_FiC9Ihw"
+        # self.mapbox_api_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
 
-    def range_selector_fig(self, selector_type, years=[2001, 2022], count=0):
+    def range_selector_fig(self, selector_type, years=[2006, 2022], count=0):
         min = years[0]
         max = years[-1]
         create_slider = dcc.RangeSlider(
@@ -61,7 +61,7 @@ class CreateFigures:
                                "value": val})
             placeholder = "Choose districts..."
         elif filter_type == "year_frame":
-            vals = ["2001-2005", "2006-2010", "2011-2015", "2016-2020"]
+            vals = ["2006-2010", "2011-2015", "2016-2020","2021-2022"]
             for val in vals:
                 options.append({"label": val, "value": val})
             placeholder = "Choose Years..."
@@ -199,44 +199,52 @@ class CreateFigures:
         return deck_component
 
     def effective_pd_fig(self, data_frame_1, data_frame_2):
-        fig = go.Figure()
+        
+        # data_frame_1
+        # x_axis = df_train.evaluate(df_train['Census_ProcessorClass'], selection = True)
+        # color_axis = df_train.evaluate(df_train['HasDetections'], selection = True)
+        print(data_frame_1.head())
+        fig3 = px.bar(data_frame_1,x="Count", y="Primary Type", color="District_Name", title="Crime Type by District")
+        
+        # fig = go.Figure()
 
-        fig.add_trace(go.Bar(
-            y=np.array(data_frame_1["Primary Type"].tolist()),
-            x=np.array(data_frame_1["Count"].tolist()),
-            name='Arrested',
-            orientation='h',
-            marker=dict(
-                color='#347FC2'
-            )
-        ))
-        fig.add_trace(go.Bar(
-            y=np.array(data_frame_2["Primary Type"].tolist()),
-            x=np.array(data_frame_2["Count"].tolist()),
-            name='Not Arrested',
-            orientation='h',
-            marker=dict(
-                color='#F69E1D'
-            )
-        ))
-        fig.update_layout(barmode='stack',
-                          height=600,
-                          yaxis=dict(
-                              title_text="Crime Type",
-                          ),
-                          xaxis=dict(
-                              title_text="Number of Criminal Offences",
-                          ),
-                          title="Effectiveness of Chicago Police Department",
-                          title_x=0.5,
-                          margin=dict(
-                              l=10,
-                              r=10,
-                              b=10,
-                              t=50,
-                              pad=4
-                          ),)
-        return fig
+        # fig.add_trace(go.Bar(
+        #     y=np.array(data_frame_1["Primary Type"].tolist()),
+        #     x=np.array(data_frame_1["Count"].tolist()),
+        #     color = np.array(data_frame_1["District_Name"].tolist()),
+        #     name='Arrested',
+        #     orientation='h',
+        #     marker=dict(
+        #         color='#347FC2'
+        #     )
+        # ))
+        # fig.add_trace(go.Bar(
+        #     y=np.array(data_frame_2["Primary Type"].tolist()),
+        #     x=np.array(data_frame_2["Count"].tolist()),
+        #     name='Not Arrested',
+        #     orientation='h',
+        #     marker=dict(
+        #         color='#F69E1D'
+        #     )
+        # ))
+        # fig.update_layout(barmode='stack',
+        #                   height=600,
+        #                   yaxis=dict(
+        #                       title_text="Crime Type",
+        #                   ),
+        #                   xaxis=dict(
+        #                       title_text="Number of Criminal Offences",
+        #                   ),
+        #                   title="Effectiveness of Chicago Police Department",
+        #                   title_x=0.5,
+        #                   margin=dict(
+        #                       l=10,
+        #                       r=10,
+        #                       b=10,
+        #                       t=50,
+        #                       pad=4
+        #                   ),)
+        return fig3
 
     def holiday_crime_fig(self, data_frame, mean):
         months = ["January", "February", "March", "April", "May", "June",
