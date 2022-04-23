@@ -88,6 +88,7 @@ class DataFilter:
             filter_years = [yr for yr in range(years[0], years[1]+1)]
             df = df[df["Year"].isin(filter_years)]
         if len(districts) > 0:
+            print(districts)
             df = df[df["District_Name"].isin(districts)]
         if len(months) > 0:
             df = df[df.Month.isin(months)]

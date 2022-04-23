@@ -61,7 +61,7 @@ class CreateFigures:
                                "value": val})
             placeholder = "Choose districts..."
         elif filter_type == "year_frame":
-            vals = ["2006-2010", "2011-2015", "2016-2020","2021-2022"]
+            vals = ["2006-2010", "2011-2015", "2016-2020", "2021-2022"]
             for val in vals:
                 options.append({"label": val, "value": val})
             placeholder = "Choose Years..."
@@ -199,13 +199,18 @@ class CreateFigures:
         return deck_component
 
     def effective_pd_fig(self, data_frame_1, data_frame_2):
-        
+
         # data_frame_1
         # x_axis = df_train.evaluate(df_train['Census_ProcessorClass'], selection = True)
         # color_axis = df_train.evaluate(df_train['HasDetections'], selection = True)
-        # print(data_frame_1.head())
-        # fig3 = px.bar(data_frame_1,x="Count", y="Primary Type", color="District_Name", title="Crime Type by District")
-        
+        print(data_frame_1.head())
+        pd_df_1 = data_frame_1.to_pandas_df()
+        pd_df_2 = data_frame_2.to_pandas_df()
+        fig3 = px.bar(pd_df_1, x="Count", y="Primary Type",
+                      color="District_Name", title="Crime Type by District")
+        fig4 = px.bar(pd_df_2, x="Count", y="Primary Type",
+                      color="District_Name", title="Crime Type by District",  text="District_Name")
+
         fig = go.Figure()
 
         fig.add_trace(go.Bar(
@@ -243,7 +248,7 @@ class CreateFigures:
                               t=50,
                               pad=4
                           ),)
-        return fig
+        return fig3
 
     def holiday_crime_fig(self, data_frame, mean):
         months = ["January", "February", "March", "April", "May", "June",
@@ -260,8 +265,8 @@ class CreateFigures:
             xaxis=dict(
             title_text="Time of the Year",
         ),
-        title="Number of Crimes During the Holidays",
-        title_x=0.5,
+            title="Number of Crimes During the Holidays",
+            title_x=0.5,
             height=600,
             margin=dict(
             l=10,
@@ -291,8 +296,8 @@ class CreateFigures:
             xaxis=dict(
             title_text="Day of week",
         ),
-        title="Crime Count by Day of the Week",
-        title_x=0.5,
+            title="Crime Count by Day of the Week",
+            title_x=0.5,
             height=600,
             margin=dict(
             l=10,
@@ -318,8 +323,8 @@ class CreateFigures:
             title_text="Time of the Day",
             tickmode="linear"
         ),
-        title="Number of Crimes by Time of the Day",
-        title_x=0.5,
+            title="Number of Crimes by Time of the Day",
+            title_x=0.5,
             height=600,
             margin=dict(
             l=10,

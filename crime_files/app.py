@@ -60,7 +60,7 @@ effective_pd_block = html.Div([
             ], style=dict(width="33.3%",marginLeft="20px",padding="15px")),
             html.Div(className="Element", id="filter_district", children = [
                 html.Label("Select Districts"),
-                figures.dropdown_filter_fig("districts_1", filters, False, "Central")
+                figures.dropdown_filter_fig("districts_1", filters, True, "Central")
             ], style=dict(width="33.3%",padding="15px")),
             html.Div(className="Element", children = [
                 html.Label("Select Month"),
@@ -825,14 +825,20 @@ def effective_pd_filter(years1, years2, districts1, districts2, months1, months2
         years1 = []
     if years2 is None:
         years2 = []
-    districts1 = [districts1] if districts1 is not None else []
+    # districts1 = [districts1] if districts1 is not None else []
+    # if district1 is of type string, convert to list
+    if isinstance(districts1, str):
+        districts1 = [districts1]
+
     districts2 = [districts2] if districts2 is not None else []
     months1 = [months1] if months1 is not None else []
     months2 = [months2] if months2 is not None else []
+    print('districts1', districts1)
     new_data_frame1 = filters.create_selection(years=years1, types=[], districts=districts1, months=months1)
     new_data_frame2 = filters.create_selection(years=years2, types=[], districts=districts2, months=months2)
     data_frame_1, data_frame_2 = filters.effective_pd_filter(new_data_frame1)
     data_frame_3, data_frame_4 = filters.effective_pd_filter(new_data_frame2)
+
     return (figures.effective_pd_fig(data_frame_1, data_frame_2),figures.effective_pd_fig(data_frame_3, data_frame_4))
 
 
@@ -978,4 +984,4 @@ def button_change(btn1,btn2,btn3,btn4,btn5,btn6):
 
 # Main
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=False,)
