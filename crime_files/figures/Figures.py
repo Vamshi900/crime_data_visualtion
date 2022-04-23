@@ -203,48 +203,47 @@ class CreateFigures:
         # data_frame_1
         # x_axis = df_train.evaluate(df_train['Census_ProcessorClass'], selection = True)
         # color_axis = df_train.evaluate(df_train['HasDetections'], selection = True)
-        print(data_frame_1.head())
-        fig3 = px.bar(data_frame_1,x="Count", y="Primary Type", color="District_Name", title="Crime Type by District")
+        # print(data_frame_1.head())
+        # fig3 = px.bar(data_frame_1,x="Count", y="Primary Type", color="District_Name", title="Crime Type by District")
         
-        # fig = go.Figure()
+        fig = go.Figure()
 
-        # fig.add_trace(go.Bar(
-        #     y=np.array(data_frame_1["Primary Type"].tolist()),
-        #     x=np.array(data_frame_1["Count"].tolist()),
-        #     color = np.array(data_frame_1["District_Name"].tolist()),
-        #     name='Arrested',
-        #     orientation='h',
-        #     marker=dict(
-        #         color='#347FC2'
-        #     )
-        # ))
-        # fig.add_trace(go.Bar(
-        #     y=np.array(data_frame_2["Primary Type"].tolist()),
-        #     x=np.array(data_frame_2["Count"].tolist()),
-        #     name='Not Arrested',
-        #     orientation='h',
-        #     marker=dict(
-        #         color='#F69E1D'
-        #     )
-        # ))
-        # fig.update_layout(barmode='stack',
-        #                   height=600,
-        #                   yaxis=dict(
-        #                       title_text="Crime Type",
-        #                   ),
-        #                   xaxis=dict(
-        #                       title_text="Number of Criminal Offences",
-        #                   ),
-        #                   title="Effectiveness of Chicago Police Department",
-        #                   title_x=0.5,
-        #                   margin=dict(
-        #                       l=10,
-        #                       r=10,
-        #                       b=10,
-        #                       t=50,
-        #                       pad=4
-        #                   ),)
-        return fig3
+        fig.add_trace(go.Bar(
+            y=np.array(data_frame_1["Primary Type"].tolist()),
+            x=np.array(data_frame_1["Count"].tolist()),
+            name='Arrested',
+            orientation='h',
+            marker=dict(
+                color='#347FC2'
+            )
+        ))
+        fig.add_trace(go.Bar(
+            y=np.array(data_frame_2["Primary Type"].tolist()),
+            x=np.array(data_frame_2["Count"].tolist()),
+            name='Not Arrested',
+            orientation='h',
+            marker=dict(
+                color='#F69E1D'
+            )
+        ))
+        fig.update_layout(barmode='stack',
+                          height=600,
+                          yaxis=dict(
+                              title_text="Crime Type",
+                          ),
+                          xaxis=dict(
+                              title_text="Number of Criminal Offences",
+                          ),
+                          title="Effectiveness of Chicago Police Department",
+                          title_x=0.5,
+                          margin=dict(
+                              l=10,
+                              r=10,
+                              b=10,
+                              t=50,
+                              pad=4
+                          ),)
+        return fig
 
     def holiday_crime_fig(self, data_frame, mean):
         months = ["January", "February", "March", "April", "May", "June",
