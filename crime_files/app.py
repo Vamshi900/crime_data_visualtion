@@ -935,4 +935,4 @@ def button_change(btn1, btn2, btn3, btn4, btn5, btn6):
 
 # Main
 if __name__ == "__main__":
-    app.run_server(debug=False,)
+    app.run_server(debug=False, port=5000)
