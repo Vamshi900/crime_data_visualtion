@@ -209,8 +209,9 @@ class CreateFigures:
                       color="District_Name", title="Crime Type Arrested by District ", text_auto='.2s')
         fig4 = px.bar(pd_df_2, x="Count", y="Primary Type",
                       color="District_Name", title="Crime Type Not Arrested by District",   text_auto='.2s')
-
-      
+        fig3.update_layout(height=600)
+        fig4.update_layout(height=600)
+    
         return fig3, fig4
 
     def holiday_crime_fig(self, data_frame, mean):
@@ -223,6 +224,7 @@ class CreateFigures:
         
         fig3.add_trace(go.Scatter(x=months, y=[mean for v in range(12)], name="Average Crimes",
         ))
+        fig3.update_layout(height=600)
         return fig3          
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=months, y=np.array(data_frame["Count"].tolist()), name="Total Crimes", text=np.array(data_frame["Count"].tolist()), textposition="top center",
@@ -288,6 +290,7 @@ class CreateFigures:
         
         # fig3.add_trace(go.Scatter(x=hours_of_day, y=[mean for v in range(24)], name="Average Crimes",
         # ))
+        fig3.update_layout(height=600)
         return fig3
 
         # fig = go.Figure()
@@ -321,8 +324,7 @@ class CreateFigures:
         pd_df_1 = data_frame.to_pandas_df()
         fig3 = px.bar(pd_df_1, x="District_Name", y="Count",
                       color="Month", title="Number of Domestic Offences",text="Count",barmode='group')
-        
-       
+        fig3.update_layout(height=600)
         return fig3 
 
 
