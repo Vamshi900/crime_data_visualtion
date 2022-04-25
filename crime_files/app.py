@@ -219,32 +219,13 @@ abuse_crime_block = html.Div([
             html.Div(className="Element", children=[
                 html.Label("Select Month"),
                 figures.dropdown_filter_fig(
-                    "months_1", filters, False, "January")
+                    "months_1", filters, True, "January")
             ], style=dict(width="25%", padding="15px"))
         ], style=dict(display='flex', width="1370px")
     ),
     html.Div(
         className="CrimeAbuse", children=[
             dcc.Graph(id="abuse_crime_1", figure={},
-                      style=dict(width="1350px"))
-        ], style=dict(display='flex',)
-    ),
-    html.Br(),
-    html.Div(
-        className="row", children=[
-            html.Div(className="Element", children=[
-                html.Label("Select Years"),
-                figures.range_selector_fig("years_2")
-            ], style=dict(width="33.3%", marginLeft="20px", padding="15px")),
-            html.Div(className="Element", children=[
-                html.Label("Select Month"),
-                figures.dropdown_filter_fig("months_2", filters, False, "May")
-            ], style=dict(width="25%", padding="15px"))
-        ], style=dict(display='flex', width="1370px")
-    ),
-    html.Div(
-        className="CrimeAbuse", children=[
-            dcc.Graph(id="abuse_crime_2", figure={},
                       style=dict(width="1350px"))
         ], style=dict(display='flex',)
     )
@@ -891,27 +872,23 @@ def crime_daytime_filter(years1, types1, districts1, months1):
 
 
 @app.callback(
-    [Output("abuse_crime_1", "figure"),
-     Output("abuse_crime_2", "figure"), ],
+    [Output("abuse_crime_1", "figure")],
     [Input("id_slider_years_1", "value"),
-     Input("id_slider_years_2", "value"),
+
      Input("id_dropdown_months_1", "value")],
-    Input("id_dropdown_months_2", "value")
+
 )
-def crime_abuse_filter(years1, years2, months1, months2):
+def crime_abuse_filter(years1, months1):
     if years1 is None:
         years1 = []
-    if years2 is None:
-        years2 = []
-    months1 = [months1] if months1 is not None else []
-    months2 = [months2] if months2 is not None else []
+    if isinstance(months1, str):
+        months1 = [months1]
+    # months1 = [months1] if months1 is not None else []
     new_data_frame1 = filters.create_selection(
         years=years1, types=[], districts=[], months=months1)
-    new_data_frame2 = filters.create_selection(
-        years=years2, types=[], districts=[], months=months2)
+
     data_frame_1 = filters.abuse_crime_filter(new_data_frame1)
-    data_frame_2 = filters.abuse_crime_filter(new_data_frame2)
-    return (figures.abuse_crime_fig(data_frame_1), figures.abuse_crime_fig(data_frame_2))
+    return [figures.abuse_crime_fig(data_frame_1)]
 
 
 @app.callback(

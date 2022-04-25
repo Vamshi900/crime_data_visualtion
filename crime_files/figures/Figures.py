@@ -280,13 +280,14 @@ class CreateFigures:
         return fig
 
     def daytime_crime_fig(self, data_frame, mean):
-
+       
+        hours_of_day = [i for i in range(24)]
         pd_df_1 = data_frame.to_pandas_df()
         fig3 = px.line(pd_df_1, x="Time", y="Count",
                       color="District_Name", title="Number of Criminal Offences",text="Count")
         
-        fig3.add_trace(go.Scatter(x=np.array(data_frame["Time"].tolist()), y=[mean for v in range(24)], name="Average Crimes",
-        ))
+        # fig3.add_trace(go.Scatter(x=hours_of_day, y=[mean for v in range(24)], name="Average Crimes",
+        # ))
         return fig3
 
         # fig = go.Figure()
@@ -316,34 +317,43 @@ class CreateFigures:
         # return fig
 
     def abuse_crime_fig(self, data_frame):
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            y=np.array(data_frame["District_Name"].tolist()),
-            x=np.array(data_frame["Count"].tolist()),
-            name='Domestic',
-            orientation='h',
-            marker=dict(
-                color='#347FC2'
-            )
-        ))
-        fig.update_layout(barmode='stack',
-                          height=600,
-                          yaxis=dict(
-                              title_text="District_Name",
-                          ),
-                          xaxis=dict(
-                              title_text="Number of Domestic Offences",
-                          ),
-                          title="Domestic Offences",
-                          title_x=0.5,
-                          margin=dict(
-                              l=10,
-                              r=10,
-                              b=10,
-                              t=50,
-                              pad=4
-                          ),)
-        return fig
+        
+        pd_df_1 = data_frame.to_pandas_df()
+        fig3 = px.bar(pd_df_1, x="District_Name", y="Count",
+                      color="Month", title="Number of Domestic Offences",text="Count",barmode='group')
+        
+       
+        return fig3 
+
+
+        # fig = go.Figure()
+        # fig.add_trace(go.Bar(
+        #     y=np.array(data_frame["District_Name"].tolist()),
+        #     x=np.array(data_frame["Count"].tolist()),
+        #     name='Domestic',
+        #     orientation='h',
+        #     marker=dict(
+        #         color='#347FC2'
+        #     )
+        # ))
+        # fig.update_layout(barmode='stack',
+        #                   height=600,
+        #                   yaxis=dict(
+        #                       title_text="District_Name",
+        #                   ),
+        #                   xaxis=dict(
+        #                       title_text="Number of Domestic Offences",
+        #                   ),
+        #                   title="Domestic Offences",
+        #                   title_x=0.5,
+        #                   margin=dict(
+        #                       l=10,
+        #                       r=10,
+        #                       b=10,
+        #                       t=50,
+        #                       pad=4
+        #                   ),)
+        # return fig
 
     def state_crime_fig(self, data_frame):
         fig = go.Figure()

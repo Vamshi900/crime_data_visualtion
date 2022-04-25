@@ -215,11 +215,11 @@ class DataFilter:
         temp_data_frame = data_frame.copy()
 
         temp_data_frame = data_frame[[
-            "Primary Type", "District_Name", "Domestic"]]
+            "Primary Type", "District_Name", "Domestic","Month"]]
         # slice for True domestic column
         temp_data_frame = temp_data_frame[temp_data_frame["Domestic"] == 'Yes']
 
-        temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"], temp_data_frame["Domestic"]], agg={
+        temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"], temp_data_frame["Domestic"],temp_data_frame["Month"],], agg={
             'Count': vx.agg.count('Domestic')}, sort=True)
 
         return temp_data_frame
