@@ -171,8 +171,8 @@ class DataFilter:
             data_frame = self.data_frame
         temp_data_frame = data_frame.copy()
         
-        temp_data_frame = data_frame[["Primary Type", "Month"]]
-        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Month"]], agg={
+        temp_data_frame = data_frame[["Primary Type", "Month", "District_Name"]]
+        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Month"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Month')}, sort=True)
 
         mean = temp_data_frame.mean("Count").tolist()
@@ -200,11 +200,11 @@ class DataFilter:
         if data_frame is None:
             data_frame = self.data_frame
         temp_data_frame = data_frame.copy()
-        temp_data_frame = temp_data_frame[["Time"]]
+        temp_data_frame = temp_data_frame[["Time","District_Name"]]
 
         temp_data_frame["Time"] = temp_data_frame["Time"].apply(
             lambda x: x[:2])
-        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Time"]], agg={
+        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Time"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Time')}, sort=True)
         mean = temp_data_frame.mean("Count").tolist()
         return temp_data_frame, mean
