@@ -80,7 +80,7 @@ class DataFilter:
         return percentage
 
     # primary data selection filter
-    def create_selection(self, years=[2001, 2022], types=[], districts=[], months=[]):
+    def create_selection(self, years=[2006 , 2022], types=[], districts=[], months=[]):
         df = self.original_data_frame.copy()
         selection = None
         if len(years) > 0:
@@ -88,6 +88,7 @@ class DataFilter:
             filter_years = [yr for yr in range(years[0], years[1]+1)]
             df = df[df["Year"].isin(filter_years)]
         if len(districts) > 0:
+            print(districts)
             df = df[df["District_Name"].isin(districts)]
         if len(months) > 0:
             df = df[df.Month.isin(months)]
@@ -128,8 +129,8 @@ class DataFilter:
             data_frame = self.data_frame
         tp_df = data_frame.copy()
         # tp_df = tp_df['Latitude', 'Longitude']
-        if tp_df.count() > 2000000:
-            tp_df = tp_df.sample(200000)
+        if tp_df.count() > 20000:
+            tp_df = tp_df.sample(20000)
         # tpf = tp_df.sample(n=2, random_state=42)
         df_pandas = tp_df.to_pandas_df()
         return df_pandas
@@ -152,14 +153,14 @@ class DataFilter:
             data_frame = self.data_frame
         temp_data_frame = data_frame.copy()
 
-        temp_data_frame = data_frame[["Primary Type", "Arrest"]]
+        temp_data_frame = data_frame[["Primary Type", "Arrest", "District_Name"]]
 
         td1 = temp_data_frame[temp_data_frame["Arrest"] == 'Yes']
         td2 = temp_data_frame[temp_data_frame["Arrest"] == 'No']
 
-        td1 = td1.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"]], agg={
+        td1 = td1.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Primary Type')}, sort=True)
-        td2 = td2.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"]], agg={
+        td2 = td2.groupby([temp_data_frame["Primary Type"], temp_data_frame["Arrest"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Primary Type')}, sort=True)
 
         return td1, td2
@@ -170,8 +171,8 @@ class DataFilter:
             data_frame = self.data_frame
         temp_data_frame = data_frame.copy()
         
-        temp_data_frame = data_frame[["Primary Type", "Month"]]
-        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Month"]], agg={
+        temp_data_frame = data_frame[["Primary Type", "Month", "District_Name"]]
+        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Month"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Month')}, sort=True)
 
         mean = temp_data_frame.mean("Count").tolist()
@@ -199,11 +200,11 @@ class DataFilter:
         if data_frame is None:
             data_frame = self.data_frame
         temp_data_frame = data_frame.copy()
-        temp_data_frame = temp_data_frame[["Time"]]
+        temp_data_frame = temp_data_frame[["Time","District_Name"]]
 
         temp_data_frame["Time"] = temp_data_frame["Time"].apply(
             lambda x: x[:2])
-        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Time"]], agg={
+        temp_data_frame = temp_data_frame.groupby([temp_data_frame["Time"],temp_data_frame["District_Name"]], agg={
             'Count': vx.agg.count('Time')}, sort=True)
         mean = temp_data_frame.mean("Count").tolist()
         return temp_data_frame, mean
@@ -214,11 +215,11 @@ class DataFilter:
         temp_data_frame = data_frame.copy()
 
         temp_data_frame = data_frame[[
-            "Primary Type", "District_Name", "Domestic"]]
+            "Primary Type", "District_Name", "Domestic","Month"]]
         # slice for True domestic column
         temp_data_frame = temp_data_frame[temp_data_frame["Domestic"] == 'Yes']
 
-        temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"], temp_data_frame["Domestic"]], agg={
+        temp_data_frame = temp_data_frame.groupby([temp_data_frame["District_Name"], temp_data_frame["Domestic"],temp_data_frame["Month"],], agg={
             'Count': vx.agg.count('Domestic')}, sort=True)
 
         return temp_data_frame
